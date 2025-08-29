@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundamental Analysis (FA) — Multilingual (EN • SI • TA)</title>
+  <!-- Fonts & Icons -->
+  <link href="https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#1e2329; --panel-2:#151a1f; --text:#e7edf3; --muted:#98a2ad; --brand:#f0b90b; --good:#3acf87; --bad:#e04b4a;
+      --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --mono:'ui-monospace', SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:'Binance PLEX', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      background:radial-gradient(1200px 600px at 10% -10%, #222a33 0%, transparent 40%),
+                 radial-gradient(900px 600px at 120% 10%, #1b2027 0%, transparent 40%),
+                 var(--bg);
+      color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:30; backdrop-filter:saturate(1.1) blur(8px);
+      background:linear-gradient(180deg, rgba(24,27,32,.9), rgba(24,27,32,.7));
+      border-bottom:1px solid #232a31; box-shadow: var(--shadow);
+    }
+    .h-wrap{max-width:1200px; margin:auto; padding:14px 18px; display:flex; gap:14px; align-items:center; justify-content:space-between}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.3px}
+    .brand i{color:var(--brand)}
+    .brand small{display:block; color:var(--muted); font-weight:500}
+    .controls{display:flex; gap:10px; align-items:center}
+    select,button{
+      background:var(--panel); color:var(--text); border:1px solid #2a3138; border-radius:12px; padding:10px 12px;
+      transition:.2s ease; box-shadow: inset 0 -2px 0 rgba(255,255,255,.02);
+    }
+    select:hover, button:hover{border-color:#3a424b}
+    button.icon{display:inline-flex; align-items:center; gap:8px}
+
+    main{max-width:1200px; margin:20px auto 80px; padding:0 18px; display:grid; grid-template-columns:280px 1fr; gap:20px}
+    nav.side{
+      position:sticky; top:72px; align-self:start; background:var(--panel-2); border:1px solid #2a3138; border-radius:16px; padding:16px; box-shadow: var(--shadow);
+    }
+    nav.side h4{margin:0 0 10px; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em}
+    nav.side a{display:block; color:var(--text); text-decoration:none; padding:10px 10px; border-radius:10px; font-size:14px}
+    nav.side a:hover{background:#20262d}
+
+    .card{background:linear-gradient(180deg, #1a1f25, #151a1f); border:1px solid #2a3138; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    .card header{position:relative; background:linear-gradient(90deg, #242a31, #1b2027); border-bottom:1px solid #2a3138}
+    .card header .c-title{max-width:1200px; margin:auto; padding:18px}
+    .badge{display:inline-flex; align-items:center; gap:8px; background:#14181d; border:1px solid #2a3138; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
+    .content{padding:22px}
+    .content h2,.content h3{margin:18px 0 10px}
+    .content p{line-height:1.6; color:#d9e3ea}
+    .content ul{padding-left:18px; line-height:1.7}
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 4}
+    .tip{border-left:3px solid var(--brand); background:#151a1f; padding:12px 14px; border-radius:10px; font-size:14px}
+
+    .score{
+      display:grid; grid-template-columns:1fr 80px; gap:10px; align-items:center; padding:10px 12px; background:#12161c; border:1px solid #2a3138; border-radius:12px;
+    }
+    .meter{height:8px; background:#0e1217; border-radius:999px; overflow:hidden; border:1px solid #2a3138}
+    .meter>span{display:block; height:100%; background:linear-gradient(90deg, #5cd6a7, #f0b90b); width:30%}
+
+    footer{max-width:1200px; margin:40px auto; padding:0 18px; color:var(--muted); font-size:13px}
+    code{font-family:var(--mono); background:#0f1318; padding:2px 6px; border-radius:6px; border:1px solid #26303a}
+    .muted{color:var(--muted)}
+    .kicker{font-size:13px; color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+      nav.side{position:relative; top:0}
+      .span-6, .span-4{grid-column:span 12}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="h-wrap">
+      <div class="brand">
+        <i class="fa-solid fa-cubes fa-lg"></i>
+        <div>
+          <div>Fundamental Analysis (FA)</div>
+          <small id="subtitle">Long‑term value based on project fundamentals</small>
+        </div>
+      </div>
+      <div class="controls">
+        <label class="kicker" for="lang">Language</label>
+        <select id="lang">
+          <option value="en" selected>English</option>
+          <option value="si">සිංහල (Sinhala)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <optgroup label="More (listed only)">
+            <option disabled>العربية (Arabic)</option>
+            <option disabled>ไทย (Thai)</option>
+            <option disabled>Français (French)</option>
+            <option disabled>Español (Spanish)</option>
+            <option disabled>Deutsch (German)</option>
+          </optgroup>
+        </select>
+        <button id="printBtn" class="icon" title="Print">
+          <i class="fa-solid fa-print"></i><span class="hide-sm">Print</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="side">
+      <h4 id="tocTitle">Contents</h4>
+      <a href="#intro">1. Overview</a>
+      <a href="#tokenomics">2. Tokenomics</a>
+      <a href="#team">3. Team &amp; Roadmap</a>
+      <a href="#whitepaper">4. Whitepaper Deep‑Dive</a>
+      <a href="#news">5. News &amp; Sentiment</a>
+      <a href="#workflow">6. Research Workflow</a>
+      <a href="#scoring">7. FA Scoring Model</a>
+      <a href="#redflags">8. Red‑Flags Checklist</a>
+      <a href="#faq">9. FAQ</a>
+    </nav>
+
+    <section>
+      <!-- INTRO -->
+      <article id="intro" class="card">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-regular fa-lightbulb"></i> <span id="introBadge">Primer</span></span>
+            <h1 id="title" style="margin:8px 0 0">Fundamental Analysis (FA) for Crypto Investors</h1>
+            <p id="deck" class="muted" style="margin:8px 0 0">A practical, research‑first framework for evaluating long‑term value beyond short‑term price swings.</p>
+          </div>
+        </header>
+        <div class="content">
+          <div id="introBody"></div>
+          <div class="tip" id="tipGeneral" style="margin-top:14px"></div>
+        </div>
+      </article>
+
+      <!-- TOKENOMICS -->
+      <article id="tokenomics" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-solid fa-coins"></i> Tokenomics</span>
+            <h2 id="tokTitle">Designing sustainable value</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div class="grid">
+            <div class="span-6">
+              <h3 id="tokSupplyTitle">Supply, Emissions &amp; Distribution</h3>
+              <div id="tokSupply"></div>
+            </div>
+            <div class="span-6">
+              <h3 id="tokUtilityTitle">Utility, Demand &amp; Value Accrual</h3>
+              <div id="tokUtility"></div>
+            </div>
+            <div class="span-6">
+              <h3 id="tokOnchainTitle">On‑chain Health &amp; Data</h3>
+              <div id="tokOnchain"></div>
+            </div>
+            <div class="span-6">
+              <h3 id="tokRisksTitle">Common Pitfalls</h3>
+              <div id="tokRisks"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- TEAM & ROADMAP -->
+      <article id="team" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-solid fa-people-group"></i> Team &amp; Roadmap</span>
+            <h2 id="teamTitle">People, Governance &amp; Shipping</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="teamBody"></div>
+          <div class="grid" style="margin-top:10px">
+            <div class="span-6">
+              <h3 id="govTitle">Governance &amp; Transparency</h3>
+              <div id="govBody"></div>
+            </div>
+            <div class="span-6">
+              <h3 id="roadmapTitle">Roadmap Reality Check</h3>
+              <div id="roadmapBody"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- WHITEPAPER -->
+      <article id="whitepaper" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-regular fa-file-lines"></i> Whitepaper</span>
+            <h2 id="wpTitle">From claims to testable assumptions</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="wpBody"></div>
+        </div>
+      </article>
+
+      <!-- NEWS & SENTIMENT -->
+      <article id="news" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-regular fa-newspaper"></i> News &amp; Sentiment</span>
+            <h2 id="newsTitle">Catalysts, narratives and risk</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div class="grid">
+            <div class="span-6">
+              <h3 id="catTitle">Catalysts to track</h3>
+              <div id="catBody"></div>
+            </div>
+            <div class="span-6">
+              <h3 id="sentTitle">Sentiment &amp; Narrative</h3>
+              <div id="sentBody"></div>
+            </div>
+          </div>
+          <div class="tip" id="tipNews" style="margin-top:14px"></div>
+        </div>
+      </article>
+
+      <!-- WORKFLOW -->
+      <article id="workflow" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-solid fa-list-check"></i> Workflow</span>
+            <h2 id="wfTitle">Step‑by‑step research process</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="wfBody"></div>
+        </div>
+      </article>
+
+      <!-- SCORING MODEL -->
+      <article id="scoring" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-solid fa-gauge"></i> FA Score</span>
+            <h2 id="scoreTitle">Lightweight scoring model (0–100)</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="scoreBody"></div>
+          <div class="score" style="margin-top:12px">
+            <div>
+              <div class="muted" id="scoreHint">Example combined score</div>
+              <div class="meter"><span id="meterFill" style="width:72%"></span></div>
+            </div>
+            <strong style="text-align:right" id="scoreNumber">72</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- REDFLAGS -->
+      <article id="redflags" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Red‑flags</span>
+            <h2 id="rfTitle">Quick diligence checklist</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="rfBody"></div>
+        </div>
+      </article>
+
+      <!-- FAQ -->
+      <article id="faq" class="card" style="margin-top:20px">
+        <header>
+          <div class="c-title">
+            <span class="badge"><i class="fa-regular fa-circle-question"></i> FAQ</span>
+            <h2 id="faqTitle">Common questions</h2>
+          </div>
+        </header>
+        <div class="content">
+          <div id="faqBody"></div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <footer>
+    <div id="footNote">Educational content only — not financial advice. DYOR. Last updated: 29 Aug 2025.</div>
+  </footer>
+
+  <script>
+    // Text content in three languages: EN, SI, TA
+    const copy = {
+      en:{
+        subtitle:"Long‑term value based on project fundamentals",
+        toc:"Contents", introBadge:"Primer",
+        title:"Fundamental Analysis (FA) for Crypto Investors",
+        deck:"A practical, research‑first framework for evaluating long‑term value beyond short‑term price swings.",
+        introBody:`<p>Fundamental Analysis (FA) is the discipline of estimating a project’s <strong>intrinsic, long‑term value</strong> by studying what it builds, how it is governed, and why its token should capture value. In crypto, prices can move violently in the short run; FA gives you an anchor: <em>understand the machine, not just the meter</em>. This guide focuses on four pillars—<strong>Tokenomics</strong>, <strong>Team & Roadmap</strong>, <strong>Whitepaper</strong>, and <strong>News & Sentiment</strong>—with checklists, a research workflow, and a lightweight scoring model you can adapt to any coin.</p>
+        <p>Use FA alongside Technical Analysis (TA). TA times entries; FA decides <em>whether</em> an asset deserves your capital at all. The goal isn’t to predict exact prices but to <strong>stack asymmetry</strong>: identify projects with durable demand, clear value capture, and credible shipping.</p>`,
+        tipGeneral:`<strong>TL;DR:</strong> Prefer projects with <em>clear utility</em>, <em>disciplined emissions</em>, <em>credible teams</em>, <em>transparent governance</em>, and <em>positive real‑world traction</em>.` ,
+
+        // Tokenomics
+        tokTitle:"Designing sustainable value",
+        tokSupplyTitle:"Supply, Emissions & Distribution",
+        tokSupply:`<ul>
+          <li><strong>Supply schedule:</strong> Fixed cap (e.g., 1B) vs. inflationary. Look for predictable, <em>slow</em> emissions with cliffs and linear unlocks that avoid constant sell pressure.</li>
+          <li><strong>Initial allocation:</strong> Founders, investors, treasury, community. Excessive insider share (>50%) is a red flag unless locks and <em>long</em> vesting are enforced.</li>
+          <li><strong>Unlock calendar:</strong> Map monthly unlocks; overlay them with liquidity and upcoming catalysts. Heavy unlocks into weak demand often depress price.</li>
+          <li><strong>Treasury policy:</strong> How are funds managed? Transparent reporting, multisig controls, and public budgeting indicate maturity.</li>
+        </ul>`,
+        tokUtilityTitle:"Utility, Demand & Value Accrual",
+        tokUtility:`<ul>
+          <li><strong>Core utility:</strong> Fee payment, staking for security, collateral, governance, or access. Ask: could the product work <em>without</em> the token? If yes, value capture may be weak.</li>
+          <li><strong>Value accrual:</strong> Buy‑and‑burn, fee share to stakers, or economic sinks (rent, access deposits). Avoid designs where usage does not loop back to the token.</li>
+          <li><strong>Demand drivers:</strong> Real users, dev adoption, integrations, and <em>recurring</em> B2B demand beat speculation‑only cycles.</li>
+          <li><strong>Velocity control:</strong> Incentives that reduce immediate selling—lockups, time‑weighted rewards, or staking that <em>actually matters</em>.</li>
+        </ul>`,
+        tokOnchainTitle:"On‑chain Health & Data",
+        tokOnchain:`<ul>
+          <li><strong>Active addresses & retention:</strong> Are users returning? Spikes are easy; retention is hard.</li>
+          <li><strong>Fees & revenue:</strong> Protocol fees (not token price) indicate real demand. Compare revenue to incentives spent.</li>
+          <li><strong>TVL & concentration:</strong> Sustainable TVL comes from sticky use‑cases, not mercenary incentives. Check whale share and smart‑contract risks.</li>
+          <li><strong>Liquidity & listings:</strong> Depth across CEX/DEX, slippage at $10k/$100k size, and credible market‑makers.</li>
+        </ul>`,
+        tokRisksTitle:"Common Pitfalls",
+        tokRisks:`<ul>
+          <li>High fully diluted valuation (FDV) with tiny float → easy to manipulate; post‑unlock gravity.</li>
+          <li>Unclear utility; token added last‑minute to raise funds.</li>
+          <li>Opaque treasuries, weak security practices, or unaudited core contracts.</li>
+        </ul>`,
+
+        // Team & Roadmap
+        teamTitle:"People, Governance & Shipping",
+        teamBody:`<p>Teams create value by <strong>shipping</strong>. Study founders’ track records, open‑source contributions, hiring quality, and culture. Public roadmaps are cheap; delivered milestones are priceless. Prefer teams that share metrics, write postmortems, and iterate with users.</p>`,
+        govTitle:"Governance & Transparency",
+        govBody:`<ul>
+          <li><strong>Ownership & control:</strong> Multisigs with named signers, clear upgrade processes, and credible security councils.</li>
+          <li><strong>DAO quality:</strong> Quorums, voter participation, proposal quality, and treasury reporting cadence.</li>
+          <li><strong>Legal posture:</strong> Jurisdiction, token classification risk, KYC/AML exposure for core products.</li>
+        </ul>`,
+        roadmapTitle:"Roadmap Reality Check",
+        roadmapBody:`<ul>
+          <li>Compare promises vs. shipped releases in the last 6–12 months.</li>
+          <li>Look for <em>compounding</em> releases—SDKs, dev grants, integrations—that grow ecosystems.</li>
+          <li>Assess runway: cash, stablecoin reserves, burn rate, and contingency planning.</li>
+        </ul>`,
+
+        // Whitepaper
+        wpTitle:"From claims to testable assumptions",
+        wpBody:`<p>Read the whitepaper like an investor <em>and</em> an engineer. Extract assumptions and turn them into tests:</p>
+        <ul>
+          <li><strong>Problem statement:</strong> What pain is solved? For whom? How big is the market?</li>
+          <li><strong>Architecture:</strong> Consensus, data availability, security model, and trust assumptions. Are trade‑offs explicit?</li>
+          <li><strong>Incentive design:</strong> Who pays whom, when, and why? Model edge cases and griefing strategies.</li>
+          <li><strong>Value capture:</strong> Draw the flow of fees and emissions; highlight where the token accrues value.</li>
+          <li><strong>Roadmap & risks:</strong> What could fail? Are timelines realistic? Are audits referenced?</li>
+        </ul>
+        <p>Good papers translate into <strong>clear specs</strong>, public repos, and testnets with measurable KPIs. If the whitepaper cannot be mapped to running code, treat claims as marketing.</p>`,
+
+        // News & Sentiment
+        newsTitle:"Catalysts, narratives and risk",
+        catTitle:"Catalysts to track",
+        catBody:`<ul>
+          <li>Mainnet/feature launches, L2 migrations, staking upgrades, fee‑switch proposals.</li>
+          <li>Listings, partnerships, enterprise pilots, and integrations with major wallets or chains.</li>
+          <li>Regulatory actions, security incidents, or sudden treasury moves.</li>
+        </ul>`,
+        sentTitle:"Sentiment & Narrative",
+        sentBody:`<p>Crypto runs on <em>narratives</em>: scaling, restaking, RWAs, gaming, AI‑x‑crypto, privacy. Narratives attract liquidity but rotate fast. Track social momentum, but confirm with <strong>usage data</strong>. When sentiment is euphoric and metrics diverge, risk rises.</p>`,
+        tipNews:`<strong>Pro tip:</strong> Build a watchlist calendar. Pre‑position only when <em>fundamentals + catalysts</em> align; avoid chasing after the announcement effect.`,
+
+        // Workflow
+        wfTitle:"Step‑by‑step research process",
+        wfBody:`<ol>
+          <li><strong>Scope:</strong> Define the use‑case and competitors.</li>
+          <li><strong>Read:</strong> Website, docs, whitepaper; collect metrics (users, fees, TVL).</li>
+          <li><strong>Model tokenomics:</strong> Supply schedule, unlocks, value capture; approximate FDV at various scenarios.</li>
+          <li><strong>Check team:</strong> Repos, commits, audits, hiring, previous exits.</li>
+          <li><strong>Map catalysts:</strong> Next 3–6 months: releases, listings, governance votes.</li>
+          <li><strong>Score:</strong> Use the rubric below; write a one‑page thesis.</li>
+          <li><strong>Risk plan:</strong> Position sizing, invalidation points, treasury diversification.</li>
+        </ol>`,
+
+        // Scoring
+        scoreTitle:"Lightweight scoring model (0–100)",
+        scoreBody:`<p>Allocate weights and score each pillar from 0–5.</p>
+        <ul>
+          <li>Tokenomics (×4) — emissions, utility, value capture, liquidity.</li>
+          <li>Team & Governance (×3) — execution, transparency, security culture.</li>
+          <li>Product‑Market Fit (×3) — usage growth, retention, revenue quality.</li>
+          <li>Narrative & Catalysts (×2) — roadmap credibility, near‑term events.</li>
+        </ul>
+        <p><em>Example:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>. Adjust weights to your strategy (e.g., long‑term investors may down‑weight near‑term catalysts).</p>`,
+        scoreHint:"Example combined score",
+
+        // Red flags
+        rfTitle:"Quick diligence checklist",
+        rfBody:`<ul>
+          <li>Anonymous treasury control; no audits for core contracts.</li>
+          <li>FDV >$5B with float < 5% and heavy unlocks in 3 months.</li>
+          <li>Token utility unclear; promises of APY without source of revenue.</li>
+          <li>Outsized marketing vs. engineering; plagiarized docs.</li>
+        </ul>`,
+
+        // FAQ
+        faqTitle:"Common questions",
+        faqBody:`<p><strong>Q:</strong> Can a token appreciate without direct value accrual? <br><strong>A:</strong> Yes, for a time—via speculation—but durable appreciation usually needs explicit capture (fees, burns, staking).</p>
+        <p><strong>Q:</strong> Should I avoid high FDV entirely?<br><strong>A:</strong> Not always. If growth is explosive <em>and</em> unlock overhang is modest, high FDV can be justified. But manage size and timing.</p>
+        <p><strong>Q:</strong> What if the team is anonymous?<br><strong>A:</strong> Some landmark projects started pseudonymous. Compensate with stronger evidence: public audits, open‑source code, and time‑tested security.</p>`
+      },
+
+      si:{
+        subtitle:"ක්‍රියාවලියෙහි දීර්ඝ කාලීන වටිනාකම — මූලික කරුණු මත",
+        toc:"අන්තර්ගතය", introBadge:"දැනුම්දීම",
+        title:"ක්‍රිප්ටෝ වසර සඳහා මූලික විශ්ලේෂණය (FA)",
+        deck:"කෙටි කාලීන මිල වෙනස්වීම්වලට පමණක් අලුයමක් නොව, ව්‍යාපෘතියේ මූලික බලකායන් තේරුම් ගැනීම මගින් දිගු කාලීන වටිනාකම ඇගයීමට මෙය කාර්යක්ෂම රාමුවකි.",
+        introBody:`<p>මූලික විශ්ලේෂණය (FA) යනු ව්‍යාපෘතියක් <strong>සිටින්නට ඇති ඇතුල්ම වටිනාකම</strong> ඇගයීමයි. එය <em>කොහොමද ඉදිකළේ</em>, <em>කවුද පාලනය කරන්නේ</em>, <em>ටෝකනයට වටිනාකම පිටතට අල්ලා ගැනීමට හේතුව මොකක්ද</em> යන්නවලට තුන්දහ නියම කරයි. ක්‍රිප්ටෝ මිල කෙටි කාලයේ ඉහළ‑පහළ වෙයි; එබැවින් FA ඔබට ආධාර වන්නේ <em>මසිනාව තේරුම් ගැනීමටයි</em>. මෙහි අවධානය <strong>ටෝකනොමික්ස්</strong>, <strong>කණ්ඩායම හා මාර්ගසටහන</strong>, <strong>වයිට්පේපරය</strong>, සහ <strong>පුවත් හා සංවේගය</strong> යන ස්ථම්භ 4ටයි.</p>
+        <p>FA, TA සමඟ යොදන්න. TA ප්‍රවේශ/නික්මීම් කාලය සොයයි; FA විසින් දීර්ඝව කල් තබා ගැනීමට සුදුසුදැයි තීරණය කරයි. අභිප්‍රායය වන්නේ නිවැරදි මිල පුරෝකථනය නොව <strong>අසාමාන්‍ය වාසි</strong> සොයන එකයි.</p>`,
+        tipGeneral:`<strong>යෝජනා:</strong> <em>හැකිලූ නිකුත් කිරීම්</em>, <em>පැහැදිලි භාවිතිතා</em>, <em>ගිරිමාන පාලනය</em>, <em>විවෘත පාලනය</em> සහ <em>බිහිවෙන සැබෑ භාවිතය</em> ඇති ව්‍යාපෘති අගය කරන්න.` ,
+
+        tokTitle:"ස්ථිර වටිනාකමක් සැලසුම් කිරීම",
+        tokSupplyTitle:"විතර, නිකුත් කිරීම හා බෙදාහැරීම",
+        tokSupply:`<ul>
+          <li><strong>සැපයුම් වේලාව:</strong> ස්ථිර සීමාවක්ද නැත්නම් ප්‍රතිසංවර්ධන ද? අඛණ්ඩ විවේක සහ ලිනියර් අන්ලොක් සමග <em>පහසු</em> නිකුත් කිරීම් වඩා සෞඛ්‍යකරය.</li>
+          <li><strong>ආරම්භික ප්‍රතිපත්තිය:</strong> ස්ථාපකයින්/ආයෝජකයින්/සාහිත්‍ය කෝෂ/ප්‍රජාව. අභ්‍යන්තර අංශය හදාරි (>50%) නම් දිගු වස්තියෙන් වැසී සිටීමට ඕනෑ.</li>
+          <li><strong>අන්ලොක් දිනදර්ශනය:</strong> මාසික අන්ලොක් සන්නිවේදනය කරලා දමා ඇති ද? දුර්වල ඉල්ලුමකට එරෙහිව අධික අන්ලොක් → මිල පීඩනය.</li>
+          <li><strong>කෝෂ කළමනාකරණය:</strong> විවෘත වාර්තා, මල්ටිසිග් පාලනය, පොදු අයවැය — පරිපక్వ සංස්කෘතියේ ලකුණ.</li>
+        </ul>`,
+        tokUtilityTitle:"භාවිතිතා, ඉල්ලුම හා වටිනාකම් අල්ලා ගැනීම",
+        tokUtility:`<ul>
+          <li><strong>මූලික භාවිතය:</strong> ගාස්තු ගෙවීම, ආරක්ෂාව සඳහා ස්ටේකින්, කොල්ලටරල්, පාලන, ප්‍රවේශය. ටෝකනය <em>අවශ්‍ය නැතිව</em> දර්ශකය ක්‍රියා කරයි නම් අල්ලා ගැනීම දුර්වලයි.</li>
+          <li><strong>අල්ලා ගැනීම:</strong> බයි‑එන්ඩ්‑බර්න්, ෆී බෙදාගැනීම, ආර්ථික සිංක්. භාවිතය ටෝකනය වෙත නැවත පටල් නොබදින ආකෘති වලින් වැළකින්න.</li>
+          <li><strong>ඉල්ලුම් ධාවක:</strong> සැබෑ පරිශීලකයන්, සංවර්ධක ඒකාබද්ධතා, නැවත නැවත අවබෝධය.</li>
+          <li><strong>වේග පාලනය:</strong> වහාම වික්‍රය කිරීම අඩු කරන උප්පැන්න — කාලය පදනම් කරගත් බෙදාහැරීම්, අර්ථවත් ස්ටේකින්.</li>
+        </ul>`,
+        tokOnchainTitle:"ශ්‍රේණියෙහි සෞඛ්‍යය",
+        tokOnchain:`<ul>
+          <li><strong>ක්‍රියාකාරී ලිපින හා තබා ගැනීම:</strong> නැවත පැමිණීම පරීක්‍ෂා කරන්න.</li>
+          <li><strong>ගාස්තු/آمدන:</strong> ටෝකන් මිල නොව, ප්‍රොටොකෝල ගාස්තු සැබෑ ඉල්ලුම පෙන්වයි.</li>
+          <li><strong>TVL හා ඒකාග්‍රතාව:</strong> "ලෙඩුදැඩුව" මුදාහැරීමක් ද? වෙල් ප්‍රමාණය/කොන්ත්‍රාත් අවදානම් පරීක්ෂා කරන්න.</li>
+          <li><strong>ද್ರවතාවය:</strong> CEX/DEX ගැඹුරුකම, $10k/$100k ස්ලිප්පේජ්, විශ්වාසවන්ත MM.</li>
+        </ul>`,
+        tokRisksTitle:"සාමාන්‍ය දෝෂ",
+        tokRisks:`<ul>
+          <li>අඩු පාවිච්චි වන ප්‍රවාහයක් සමඟ ඉහළ FDV → අන්ලොක් පසු වර්ජනය.</li>
+          <li>අස්පෂ්ට භාවිතය; අවසානයේ ටෝකනය එක්කර මුදල් එකතු කිරීම.</li>
+          <li>අවිවෘත කෝෂ, අඩු ආරක්ෂාව, ප්‍රධාන කොන්ත්‍රාත් නොපරීක්ෂා කර තිබීම.</li>
+        </ul>`,
+
+        teamTitle:"මිනිසුන්, පාලනය හා නිෂ්පාදනය",
+        teamBody:`<p>අගය නිර්මාණය කරන්නේ <strong>බಿಡ්ඩා දියත් කිරීමෙන්</strong>. පිටපත නොව ගුණාත්මක සංවර්ධනය, නිරන්තර ප්‍රසිද්ධ වාර්තා, පරිශීලක ප්‍රතිචාරය මත ඉංජිනේරු වඩපිහිට — මේවා සොයන්න.</p>`,
+        govTitle:"පාලනය හා පැහැදිලි බව",
+        govBody:`<ul>
+          <li><strong>හිමිකම්/පාලනය:</strong> නම් දැක්වූ මල්ටිසිග්, ප්‍රකාශිත අනුත්ස්කරණ ක්‍රියා පටිපාටි, ආරක්ෂක සභා.</li>
+          <li><strong>DAO ගුණාත්මකභාවය:</strong> කොරම්, ඡන්දගත වීම, යෝජනා ගුණය, කෝෂ වාර්තා.</li>
+          <li><strong>නීතිමය තත්ත්වය:</strong> නීති අයකිරීම් අවදානම, KYC/AML බලපෑම.</li>
+        </ul>`,
+        roadmapTitle:"මාර්ගසටහන් යථාර්ථ පරීක්ෂාව",
+        roadmapBody:`<ul>
+          <li>පසු මාස 6–12 ක කාලයේ පොරොන්දු vs. නිමවුම් වල සංසන්දනය කරන්න.</li>
+          <li>SDK/අනුබද්ධතා/ඩිවලොපර් අරමුදල් වැනි <em>සංයෝජිත</em> දියත් කිරීම් සොයන්න.</li>
+          <li>රන්වේ: මූල්‍ය තොග, බර නොමැතිව ඵලදායී වියදම්, සංඛ්‍යාත වාර්තා.</li>
+        </ul>`,
+
+        wpTitle:"ප්‍රකාශන → පරීක්ෂා කළ හැකි උපකල්පන",
+        wpBody:`<p>වයිට්පේපරය ආයෝජකයෙකු සහ ඉංජිනේරුවෙකු ලෙස කියවන්න. අනුවාද සකස් කර පරීක්ෂණ බවට හැරවීම:</p>
+        <ul>
+          <li><strong>ගැටලුව:</strong> කාට? කොපමණ වෙළඳපොළක්?</li>
+          <li><strong>පිරිවිතර:</strong> එකඟතාවය/ආරක්ෂාව/නඩුව; ත්‍යාගයන් පැහැදිලිද?</li>
+          <li><strong>ප්‍රෝත්සාහන:</strong> කාගේ වෙත කවදා මුදල් ගෙනෙයි? අසීමිත සංයෝග වලින් බිඳේද?</li>
+          <li><strong>අල්ලා ගැනීම:</strong> ගාස්තු සහ නිකුත් කිරීම් ප්‍රවාහ සිතියම් අදින්න.</li>
+          <li><strong>අපයාස:</strong> අසාර්ථක විය හැකි දේ? audit/පරීක්ෂණ සඳහන්ද?</li>
+        </ul>
+        <p>හොඳ වයිට්පේපර → <strong>පැහැදිලි විශේෂණ</strong>, විවෘත කේත, KPIs සහිත පරීක්ෂණ ජාල.</p>`,
+
+        newsTitle:"ප්‍රබලකාරක, කථාබන්ධන හා අවදානම",
+        catTitle:"අවධානය යොමු කළ යුතු ප්‍රබලකාරක",
+        catBody:`<ul>
+          <li>මැයින්නෙට්/විශේෂාංග, L2 මාරු, ෆී‑ස්විච් යෝජනා.</li>
+          <li>ලැයිස්තුගත වීම, හවුල්කාරිත්වය, ප්‍රධාන වෙල්ට්/චේන් ඒකාබද්ධතා.</li>
+          <li>නියාමන ක්‍රියාමාර්ග, ආරක්ෂක සිදුවීම්, කෝෂ ප්‍රචලන.</li>
+        </ul>`,
+        sentTitle:"සංවේගය හා ප්‍රවණතා",
+        sentBody:`<p>ක්‍රිප්ටෝ කථාබන්ධන මත ධාවනය වෙයි: ස්කේලින්, රි‑ස්ටේකින්, RWA, ගේමින්, AI‑x‑ක්‍රිප්ටෝ, පෞද්ගලිකත්වය. සංවේගය ශක්තිමත් වූ විට දත්ත සමඟ තහවුරු කරන්න.</p>`,
+        tipNews:`<strong>උපදේශය:</strong> Ivant list/දිනදර්ශනය තබා ගන්න. මූලික + ප්‍රබලකාරක එකට ගැලපේන විට පමණක් ස්ථානය ගන්න.` ,
+
+        wfTitle:" පියවරෙන්‑පියවර පර්යේෂණ ක්‍රියාවලිය",
+        wfBody:`<ol>
+          <li><strong>විෂය නිර්වචනය:</strong> භාවිතය/පිරිස/අලුත්කරුවන්.</li>
+          <li><strong>කියවීම:</strong> සෞම්‍ය ලිපිගොනු/වයිට්පේපර/මිනිත්තු; ප්‍රමාණ (පරිශීලක, ගාස්තු, TVL) එකතු කරන්න.</li>
+          <li><strong>ටෝකනොමික්ස්:</strong> සැපයුම/අන්ලොක්/අල්ලා ගැනීම; FDV ඵලදාව මොකද්ද?</li>
+          <li><strong>කණ්ඩායම:</strong> රෙපෝ/කමිට්/ආරක්ෂක වාර්තා/කාර්ය මණ්ඩලය.</li>
+          <li><strong>ප්‍රබලකාරක:</strong> මස 3–6: නිකුත් කිරීම්, ලැයිස්තු, පාලන ඡන්ද.</li>
+          <li><strong>අග හා ලේඛනය:</strong> පූර්වනිර්ණිත සකස් කිරීම්/තීසි.</li>
+          <li><strong>අවදානම:</strong> තනතුරේ ප්‍රමාණය, අවිශ්වාස ස්ථාන, කෝෂ විවිධීකරණය.</li>
+        </ol>`,
+
+        scoreTitle:"සරල ලකුණුකරණ ආකෘතිය (0–100)",
+        scoreBody:`<p>පහත ස්ථම්භ වලට 0–5 දක්වා ලකුණු දෙන්න; බර ලබාදෙන්න.</p>
+        <ul>
+          <li>ටෝකනොමික්ස් (×4)</li>
+          <li>කණ්ඩායම/පාලනය (×3)</li>
+          <li>නිෂ්පාදන‑විපණන ගැළපීම (×3)</li>
+          <li>කථාබන්ධන/ප්‍රබලකාරක (×2)</li>
+        </ul>
+        <p><em>උදාහරණය:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>.</p>`,
+        scoreHint:"උදාහරණ එකතුව",
+
+        rfTitle:"ද්‍රුත පිරික්සුම",
+        rfBody:`<ul>
+          <li>නම් නොදන්නා කෝෂ පාලනය; ප්‍රධාන කොන්ත්‍රාත් audit නැතිව.</li>
+          <li>FDV ඉහළ; කුඩා ෆ්ලෝට්; නිකුත් අධික මාස තුනක් ඇතුළත.</li>
+          <li>අස්පෂ්ට භාවිතය; මූලාශ්‍ර නැති APY පොරොන්දු.</li>
+          <li>ඉංජිනේරුට වඩා අතිරික්ත ප්‍රචාරකය.</li>
+        </ul>`,
+
+        faqTitle:"නිතර අසන ප්‍රශ්න",
+        faqBody:`<p><strong>ප්‍ර:</strong> වටිනාකම අල්ලා නොගන්නා ටෝකනයක් ඉහළ යා හැකිද?<br><strong>පි:</strong> කාලිකව හැක. නමුත් දීර්ඝ කාලය සඳහා පැහැදිලි අල්ලා ගැනීමක් (fees/burn/stake) අනෙකුත්.</p>
+        <p><strong>ප්‍ර:</strong> ඉහළ FDV සම්පූර්ණයෙන් වැළැක්විය යුතුද?<br><strong>පි:</strong> නෑ. ඉතා ඉහළ වර්ධනයක් ඇතිවූ විට සහ අන්ලොක් අඩු නම් යුක්ත විය හැක.</p>
+        <p><strong>ප්‍ර:</strong> කණ්ඩායම අනනීය නම්?<br><strong>පි:</strong> audit/විවෘත කේත/කාලය හරහා ආරක්ෂිත බව — මේවා තහවුරු විය යුතුය.</p>`
+      },
+
+      ta:{
+        subtitle:"திட்டத்தின் அடிப்படைங்களின் அடிப்படையில் நீண்டகால மதிப்பு",
+        toc:"உள்ளடக்கம்", introBadge:"அறிமுகம்",
+        title:"கிரிப்டோ முதலீட்டாளர்களுக்கான அடிப்படை (FA) ஆய்வு",
+        deck:"குறுகியகால விலை அலைச்சலுக்கு அப்பால், திட்டம் உண்மையில் மதிப்பைப் பிடிக்குமா என்பதை கண்டறிய பயன்படும் நடைமுறை வழிகாட்டி.",
+        introBody:`<p>அடிப்படை ஆய்வு (FA) என்பது ஒரு திட்டத்தின் <strong>உள்ளார்ந்த நீண்டகால மதிப்பை</strong> அறிதல். அது என்ன கட்டுகிறது, எவ்வாறு நிர்வகிக்கப்படுகிறது, ஏன் டோக்கனில் மதிப்பு சேரும்—இவைகளைப் பார்க்கிறது. கிரிப்டோவில் விலை வேகமாக மாறலாம்; அதனால் இயந்திரத்தைப் புரிந்துகொள்ளுங்கள், அளவுகோலை மட்டும் இல்லை.</p>
+        <p>FA‑வை TA‑வுடன் சேர்த்து பயன்படுத்துங்கள். TA நுழைவு/வெளியேறும் நேரத்தைத் தேர்ந்தெடுக்கும்; FA இந்த சொத்து உங்கள் மூலதனத்துக்குத் தகுதியா என்பதை தீர்மானிக்கும்.</p>`,
+        tipGeneral:`<strong>சுருக்கம்:</strong> <em>பயன்பாடு தெளிவு</em>, <em>ஒழுங்கான வெளியீடு</em>, <em>நம்பகமான அணி</em>, <em>வெளிப்படையான நிர்வாகம்</em>, <em>உண்மையான பயன்பாடு</em>—இவை உள்ள திட்டங்களை முன்னிறுத்துங்கள்.` ,
+
+        tokTitle:"நிலையான மதிப்பு வடிவமைப்பு",
+        tokSupplyTitle:"வழங்கல், வெளியீடு & பகிர்வு",
+        tokSupply:`<ul>
+          <li><strong>வழங்கல் அட்டவணை:</strong> நிலையான உச்சவரம்பா? ஊக்கலாமா? முன்னறிவிக்கத்தக்க மெதுவான வெளியீடு சிறந்தது.</li>
+          <li><strong>ஆரம்ப ஒதுக்கீடு:</strong> நிறுவனர்கள்/முதலீட்டாளர்கள்/கோஷம்/சமூகம்—உட்புறம் அதிகமாக (>50%) இருந்தால் நீண்ட vesting கட்டாயம்.</li>
+          <li><strong>அன்லாக் காலண்டர்:</strong> மாதாந்திர அன்லாக் + திரவத்துடன் ஒப்பிடவும்; பலவீனமான தேவையில் கனரக அன்லாக் விலையை அழுத்தம் செய்கிறது.</li>
+          <li><strong>கோஷக் கொள்கை:</strong> அறிக்கைகள், multisig கட்டுப்பாடு, பட்ஜெட்டிங்—முதிர்ச்சியின் அடையாளம்.</li>
+        </ul>`,
+        tokUtilityTitle:"பயன்பாடு, தேவை & மதிப்பு பிடித்தல்",
+        tokUtility:`<ul>
+          <li><strong>மூல பயன்பாடு:</strong> கட்டணம், பாதுகாப்புக்கான staking, collateral, governance, அணுகல். டோக்கன் இன்றி தயாரிப்பு இயங்குமானால் மதிப்பு பிடித்தல் பலவீனமாகலாம்.</li>
+          <li><strong>மதிப்பு பிடித்தல்:</strong> buy‑and‑burn, fee‑share, பொருளாதார sinks.</li>
+          <li><strong>தேவை இயங்கிகள்:</strong> மீண்டும் பயன்பாடு, developer இணைப்புகள், B2B தேவை.</li>
+          <li><strong>வேகம் கட்டுப்பாடு:</strong> உடனடி விற்பனையை குறைக்கும் ஊக்கங்கள்; அர்த்தமுள்ள staking.</li>
+        </ul>`,
+        tokOnchainTitle:"ஒன்‑செயின் ஆரோக்கியம்",
+        tokOnchain:`<ul>
+          <li><strong>செயலில் உள்ள முகவரிகள் & தக்கவைப்பு:</strong> பயனர்கள் திரும்புகிறார்களா?</li>
+          <li><strong>கட்டணங்கள் & வருவாய்:</strong> டோக்கன் விலை அல்ல; நிஜப் பயன்பாட்டின் சான்று.</li>
+          <li><strong>TVL & ஏகாக்ரம்:</strong> நிலையான TVL > ஊக்கங்களால் வந்த TVL. வ்வேல் பங்கு & ஒப்பந்த ஆபத்துகள்.</li>
+          <li><strong>திரவம் & பட்டியல்கள்:</strong> CEX/DEX ஆழம், ஸ்லிப்பேஜ், சந்தை‑மேக்கர்கள்.</li>
+        </ul>`,
+        tokRisksTitle:"பொதுவான சிக்கல்கள்",
+        tokRisks:`<ul>
+          <li>சிறிய மிதவை உடன் உயர் FDV → அன்லாக் பிறகு காந்தம்.</li>
+          <li>தெளிவற்ற பயன்பாடு; நிதி சேகரிக்க பின்னர் சேர்க்கப்பட்ட டோக்கன்.</li>
+          <li>தெளிவற்ற கோஷம், பாதுகாப்பு பலவீனம், audit இன்றி முக்கிய ஒப்பந்தங்கள்.</li>
+        </ul>`,
+
+        teamTitle:"மனிதர், நிர்வாகம் & கப்பல்",
+        teamBody:`<p><strong>கப்பல் செய்வதே</strong> மதிப்பை உருவாக்குகிறது. நிறுவனர்களின் வரலாறு, திறந்த மூல பங்களிப்புகள், நியமனம், கலாசாரம்—இவைகளைப் பாருங்கள். அளவுகோல்கள், post‑mortems, பயனர் பின்னூட்டம்—வெளிப்படையாகப் பகிரும் அணிகளை விரும்புங்கள்.</p>`,
+        govTitle:"நிர்வாகம் & வெளிப்படைமை",
+        govBody:`<ul>
+          <li><strong>உரிமை/கட்டுப்பாடு:</strong> பெயரிடப்பட்ட multisig, மேம்படுத்தல் நடைமுறை, பாதுகாப்புக் கவுன்சில்.</li>
+          <li><strong>DAO தரம்:</strong> quorum, வாக்களிப்பு, யோசனைகளின் தரம், கோஷ அறிக்கைகள்.</li>
+          <li><strong>சட்ட நிலை:</strong> நிர்வாக ஆபத்து, KYC/AML தாக்கம்.</li>
+        </ul>`,
+        roadmapTitle:"ரோட்மேப் நிஜத்தன்மை",
+        roadmapBody:`<ul>
+          <li>கடந்த 6–12 மாதங்களில் வாக்குறுதி vs வெளியீடு.</li>
+          <li>SDK/இணைப்புகள்/மானியங்கள் போன்ற <em>சேர்க்கை</em> வெளியீடுகள்.</li>
+          <li>ரன்வே: ரொக்கம், ஸ்டேபிள் ரிசர்வ், செலவு வீதம்.</li>
+        </ul>`,
+
+        wpTitle:"கூற்றுகள் → சோதிக்கக்கூடிய முன்னெண்ணங்கள்",
+        wpBody:`<p>வெள்ளைக்காகிதத்தை முதலீட்டாளர்/பொறியாளர் பார்வையில் வாசிக்கவும்; முன்னெண்ணங்களைச் சோதனைக்கு மாற்றவும்:</p>
+        <ul>
+          <li><strong>பிரச்சினை:</strong> யாருக்கு? சந்தை அளவு?</li>
+          <li><strong>வடிவமைப்பு:</strong> ஒப்புமதி, பாதுகாப்பு, நம்பிக்கை முன்எண்ணங்கள்.</li>
+          <li><strong>ஊக்கங்கள்:</strong> யாருக்கு, எப்போது, ஏன் பணம்?</li>
+          <li><strong>மதிப்பு பிடித்தல்:</strong> கட்டண ஓட்டம், வெளியீடு ஓட்டம்; டோக்கனுக்கு எங்கே பிடிக்கிறது?</li>
+          <li><strong>ஆபத்துகள் & காலக்கெடு:</strong> நிஜமானதா? audit உள்ளதா?</li>
+        </ul>
+        <p>நல்ல வெள்ளைக்காகிதம் → <strong>தெளிவான விவரக்குறிப்பு</strong>, பொது களஞ்சியம், அளவிடக்கூடிய KPI‑கள்.</p>`,
+
+        newsTitle:"ஊக்கிகள், கதைகள் & அபாயம்",
+        catTitle:"கவனிக்க வேண்டிய ஊக்கிகள்",
+        catBody:`<ul>
+          <li>மேயின்நெட்/பண்புகள், L2 மாற்றம், fee‑switch வாக்கெடுப்பு.</li>
+          <li>பட்டியல்கள், கூட்டாண்மைகள், முக்கிய chain/wallet இணைப்பு.</li>
+          <li>ஒழுங்குமுறை நடவடிக்கைகள், பாதுகாப்பு சம்பவங்கள், கோஷ நகர்வுகள்.</li>
+        </ul>`,
+        sentTitle:"உணர்வு & கதைக்களம்",
+        sentBody:`<p>கிரிப்டோ <em>கதைகளில்</em> ஓடுகிறது: ஸ்கேலிங், re‑staking, RWA, கேமிங், AI‑x‑கிரிப்டோ, தனியுரிமை. உணர்வு அதிகரிக்கும் போது பயன்படுத்தல் தரவைப் பார்த்து உறுதிப்படுத்துங்கள்.</p>`,
+        tipNews:`<strong>குறிப்பு:</strong> காலெண்டர் வைத்திருங்கள். <em>அடிப்படை + ஊக்கி</em> ஒத்துப்போனால் மட்டும் முன்‑நிலையமைக்கவும்.`,
+
+        wfTitle:"படி‑படியாக ஆராய்ச்சி",
+        wfBody:`<ol>
+          <li><strong>அளவு:</strong> பயன்பாடு & போட்டியாளர்கள்.</li>
+          <li><strong>வாசிக்க:</strong> தளம், ஆவணங்கள், வெள்ளைக்காகிதம்; அளவுகோல்கள் சேகரி.</li>
+          <li><strong>டோக்கனோமிக்ஸ்:</strong> வழங்கல்/அன்லாக்/பிடித்தல்; FDV காட்சி.</li>
+          <li><strong>அணி:</strong> repos, commits, audits, hiring.</li>
+          <li><strong>ஊக்கிகள்:</strong> அடுத்த 3–6 மாத வெளியீடுகள்/வாக்கெடுப்புகள்.</li>
+          <li><strong>மதிப்பீடு:</strong> கீழுள்ள rubric; ஒரு பக்க thesis.</li>
+          <li><strong>அபாயம்:</strong> அளவு, தவறாக்கும் புள்ளி, பல்துறைப்படுத்தல்.</li>
+        </ol>`,
+
+        scoreTitle:"எளிய மதிப்பெண் மாதிரி (0–100)",
+        scoreBody:`<p>ஒவ்வொரு தூணுக்கும் 0–5; வண்ணங்களைப் பயன்படுத்தவும்.</p>
+        <ul>
+          <li>டோக்கனோமிக்ஸ் (×4)</li>
+          <li>அணி & நிர்வாகம் (×3)</li>
+          <li>தயாரிப்பு‑சந்தை பொருத்தம் (×3)</li>
+          <li>கதை & ஊக்கி (×2)</li>
+        </ul>
+        <p><em>உதாரணம்:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>.</p>`,
+        scoreHint:"உதாரண இணை மதிப்பெண்",
+
+        rfTitle:"விரைவு சரிபார்ப்பு",
+        rfBody:`<ul>
+          <li>அடையாளமற்ற கோஷ கட்டுப்பாடு; audit இன்றி முக்கிய ஒப்பந்தங்கள்.</li>
+          <li>FDV மிக உயரம்; மிதவை மிகக் குறைவு; 3 மாதத்தில் கனரக அன்லாக்.</li>
+          <li>பயன்பாடு தெளிவற்றது; வருவாய் மூலமின்றி APY வாக்குறுதி.</li>
+          <li>மார்க்கெட்டிங் மிகுதி; நகலெடுத்த ஆவணங்கள்.</li>
+        </ul>`,
+
+        faqTitle:"அடிக்கடி கேட்கப்படும் கேள்விகள்",
+        faqBody:`<p><strong>கே:</strong> நேரடி மதிப்பு பிடித்தல் இல்லாமல் விலை உயருமா?<br><strong>ப:</strong> சில காலம் மட்டும்; நிலையான உயர்வு பொதுவாக fee/burn/stake போன்ற பிடித்தலை தேவைப்படுத்தும்.</p>
+        <p><strong>கே:</strong> உயர் FDV‑ஐ முழுமையாக தவிர்க்க வேண்டுமா?<br><strong>ப:</strong> அவசியமில்லை; வளர்ச்சி வேகமாகவும் unlock குறைவாகவும் இருந்தால் சாத்தியம்.</p>
+        <p><strong>கே:</strong> அணி பெயரில்லையெனில்?<br><strong>ப:</strong> audit, திறந்த மூல குறியீடு, காலசோதனை—இவற்றால் ஈடு செய்யுங்கள்.</p>`
+      }
+    };
+
+    // DOM targets
+    const els = {
+      subtitle: document.getElementById('subtitle'),
+      tocTitle: document.getElementById('tocTitle'),
+      introBadge: document.getElementById('introBadge'),
+      title: document.getElementById('title'),
+      deck: document.getElementById('deck'),
+      introBody: document.getElementById('introBody'),
+      tipGeneral: document.getElementById('tipGeneral'),
+
+      tokTitle: document.getElementById('tokTitle'),
+      tokSupplyTitle: document.getElementById('tokSupplyTitle'),
+      tokSupply: document.getElementById('tokSupply'),
+      tokUtilityTitle: document.getElementById('tokUtilityTitle'),
+      tokUtility: document.getElementById('tokUtility'),
+      tokOnchainTitle: document.getElementById('tokOnchainTitle'),
+      tokOnchain: document.getElementById('tokOnchain'),
+      tokRisksTitle: document.getElementById('tokRisksTitle'),
+      tokRisks: document.getElementById('tokRisks'),
+
+      teamTitle: document.getElementById('teamTitle'),
+      teamBody: document.getElementById('teamBody'),
+      govTitle: document.getElementById('govTitle'),
+      govBody: document.getElementById('govBody'),
+      roadmapTitle: document.getElementById('roadmapTitle'),
+      roadmapBody: document.getElementById('roadmapBody'),
+
+      wpTitle: document.getElementById('wpTitle'),
+      wpBody: document.getElementById('wpBody'),
+
+      newsTitle: document.getElementById('newsTitle'),
+      catTitle: document.getElementById('catTitle'),
+      catBody: document.getElementById('catBody'),
+      sentTitle: document.getElementById('sentTitle'),
+      sentBody: document.getElementById('sentBody'),
+      tipNews: document.getElementById('tipNews'),
+
+      wfTitle: document.getElementById('wfTitle'),
+      wfBody: document.getElementById('wfBody'),
+
+      scoreTitle: document.getElementById('scoreTitle'),
+      scoreBody: document.getElementById('scoreBody'),
+      scoreHint: document.getElementById('scoreHint'),
+      meterFill: document.getElementById('meterFill'),
+      scoreNumber: document.getElementById('scoreNumber'),
+
+      rfTitle: document.getElementById('rfTitle'),
+      rfBody: document.getElementById('rfBody'),
+
+      faqTitle: document.getElementById('faqTitle'),
+      faqBody: document.getElementById('faqBody'),
+    };
+
+    function render(lang='en'){
+      const t = copy[lang];
+      els.subtitle.textContent = t.subtitle;
+      els.tocTitle.textContent = t.toc;
+      els.introBadge.textContent = t.introBadge;
+      els.title.textContent = t.title;
+      els.deck.textContent = t.deck;
+      els.introBody.innerHTML = t.introBody;
+      els.tipGeneral.innerHTML = t.tipGeneral;
+
+      els.tokTitle.textContent = t.tokTitle;
+      els.tokSupplyTitle.textContent = t.tokSupplyTitle;
+      els.tokSupply.innerHTML = t.tokSupply;
+      els.tokUtilityTitle.textContent = t.tokUtilityTitle;
+      els.tokUtility.innerHTML = t.tokUtility;
+      els.tokOnchainTitle.textContent = t.tokOnchainTitle;
+      els.tokOnchain.innerHTML = t.tokOnchain;
+      els.tokRisksTitle.textContent = t.tokRisksTitle;
+      els.tokRisks.innerHTML = t.tokRisks;
+
+      els.teamTitle.textContent = t.teamTitle;
+      els.teamBody.innerHTML = t.teamBody;
+      els.govTitle.textContent = t.govTitle;
+      els.govBody.innerHTML = t.govBody;
+      els.roadmapTitle.textContent = t.roadmapTitle;
+      els.roadmapBody.innerHTML = t.roadmapBody;
+
+      els.wpTitle.textContent = t.wpTitle;
+      els.wpBody.innerHTML = t.wpBody;
+
+      els.newsTitle.textContent = t.newsTitle;
+      els.catTitle.textContent = t.catTitle;
+      els.catBody.innerHTML = t.catBody;
+      els.sentTitle.textContent = t.sentTitle;
+      els.sentBody.innerHTML = t.sentBody;
+      els.tipNews.innerHTML = t.tipNews;
+
+      els.wfTitle.textContent = t.wfTitle;
+      els.wfBody.innerHTML = t.wfBody;
+
+      els.scoreTitle.textContent = t.scoreTitle;
+      els.scoreBody.innerHTML = t.scoreBody;
+      els.scoreHint.textContent = t.scoreHint;
+
+      els.rfTitle.textContent = t.rfTitle;
+      els.rfBody.innerHTML = t.rfBody;
+
+      els.faqTitle.textContent = t.faqTitle;
+      els.faqBody.innerHTML = t.faqBody;
+
+      // small flourish to animate meter
+      const example = 72; // example score
+      els.scoreNumber.textContent = example;
+      requestAnimationFrame(()=>{
+        els.meterFill.style.width = '0%';
+        setTimeout(()=>{ els.meterFill.style.width = example+'%'; }, 60);
+      });
+    }
+
+    // Bindings
+    const langSel = document.getElementById('lang');
+    langSel.addEventListener('change', e=>{
+      const lang = e.target.value;
+      render(lang);
+    });
+
+    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+
+    // Initial render
+    render('en');
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
