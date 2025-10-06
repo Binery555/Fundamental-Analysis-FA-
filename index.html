@@ -1,782 +1,1164 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>Untitled</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fundamental Analysis (FA) — Multilingual (EN • SI • TA)</title>
+  <!-- Important: viewport-fit=cover for iOS safe areas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Futures Assets Mockup — with 6M Trend Profit Cards (Top bars fixed, Frame Removed, +20 trades, random small-loss duo) — Margin Persistent</title>
+
   <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- Binance PLEX for better '1' glyph -->
   <link href="https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- html2canvas for saving only the PNL card -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+
   <style>
     :root{
-      --bg:#0f1115; --panel:#1e2329; --panel-2:#151a1f; --text:#e7edf3; --muted:#98a2ad; --brand:#f0b90b; --good:#3acf87; --bad:#e04b4a;
-      --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
-      --mono:'ui-monospace', SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      /* iPhone 16 Pro Max logical width ~430px */
+      --app-w: 430px;
+
+      /* mobile viewport height fix; JS sets this value at runtime */
+      --vh: 1vh;
+
+      --bg-base:#1E2128;
+      --panel-bg:#1e2127;
+      --secondary-bg:#32383e;
+      --text-secondary:#7c828a;
+      --text-green:#3acf87;
+      --text-red:#e04b4a;
+      --btn-bg:#2f3339;
+      --highlight:#f0b90b;
+
+      --seg-w: 200px;
+      --seg-h: 26px;
+      --seg-pad: 2px;
+      --seg-gap: 2px;
+      --seg-r: 10px;
+      --seg-thumb-r: 6px;
+      --seg-font: 12px;
+
+      --frame-gutter-x: 10px;
+      --card-inset: 2px;
+
+      --slot-top: 16px;
+      --slot-bottom: 14px;
+
+      --bottom-nav-h: 64px;
+
+      --scene-offset-x: 0cm;
+      --scene-offset-y: 0cm;
     }
-    *{box-sizing:border-box}
+
+    *{margin:0;padding:0;box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family:'Binance PLEX', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-      background:radial-gradient(1200px 600px at 10% -10%, #222a33 0%, transparent 40%),
-                 radial-gradient(900px 600px at 120% 10%, #1b2027 0%, transparent 40%),
-                 var(--bg);
-      color:var(--text);
+      background:var(--bg-base);
+      display:flex;justify-content:center;align-items:flex-start;
+      padding:0;min-height:100vh;color:#E1E3E8;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      touch-action:manipulation; overscroll-behavior-y:contain;
     }
-    header{
-      position:sticky; top:0; z-index:30; backdrop-filter:saturate(1.1) blur(8px);
-      background:linear-gradient(180deg, rgba(24,27,32,.9), rgba(24,27,32,.7));
-      border-bottom:1px solid #232a31; box-shadow: var(--shadow);
+
+    /* App container is centered and fits iPhone width with safe area padding */
+    .app{
+      width:min(var(--app-w), 100vw);
+      max-width:100vw;
+      background:var(--bg-base);color:#E1E3E8;
+      border:none;border-radius:0;overflow:visible;position:relative;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 12px)
+        var(--frame-gutter-x)
+        calc(env(safe-area-inset-bottom, 0px) + 90px);
+      font-family:Inter, "Segoe UI", Roboto, sans-serif
     }
-    .h-wrap{max-width:1200px; margin:auto; padding:14px 18px; display:flex; gap:14px; align-items:center; justify-content:space-between}
-    .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.3px}
-    .brand i{color:var(--brand)}
-    .brand small{display:block; color:var(--muted); font-weight:500}
-    .controls{display:flex; gap:10px; align-items:center}
-    select,button{
-      background:var(--panel); color:var(--text); border:1px solid #2a3138; border-radius:12px; padding:10px 12px;
-      transition:.2s ease; box-shadow: inset 0 -2px 0 rgba(255,255,255,.02);
+
+    .amount,.value,.rate{font-family:Inter, "Segoe UI", Roboto, sans-serif!important}
+    button{cursor:pointer;border:none;background:transparent;font:inherit;color:inherit}
+
+    .top-stack{
+      position:sticky; top:calc(env(safe-area-inset-top, 0px));
+      z-index:30;
+      background:var(--bg-base);
+      padding-bottom:8px; margin-bottom:8px;
     }
-    select:hover, button:hover{border-color:#3a424b}
-    button.icon{display:inline-flex; align-items:center; gap:8px}
 
-    main{max-width:1200px; margin:20px auto 80px; padding:0 18px; display:grid; grid-template-columns:280px 1fr; gap:20px}
-    nav.side{
-      position:sticky; top:72px; align-self:start; background:var(--panel-2); border:1px solid #2a3138; border-radius:16px; padding:16px; box-shadow: var(--shadow);
+    .top-toggle{
+      position:relative;width:var(--seg-w);
+      margin:2px auto 6px;padding:var(--seg-pad);
+      background:#20242c;border:1px solid #343a40;border-radius:var(--seg-r);
+      display:grid;grid-template-columns:1fr 1fr;gap:var(--seg-gap);
     }
-    nav.side h4{margin:0 0 10px; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em}
-    nav.side a{display:block; color:var(--text); text-decoration:none; padding:10px 10px; border-radius:10px; font-size:14px}
-    nav.side a:hover{background:#20262d}
-
-    .card{background:linear-gradient(180deg, #1a1f25, #151a1f); border:1px solid #2a3138; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
-    .card header{position:relative; background:linear-gradient(90deg, #242a31, #1b2027); border-bottom:1px solid #2a3138}
-    .card header .c-title{max-width:1200px; margin:auto; padding:18px}
-    .badge{display:inline-flex; align-items:center; gap:8px; background:#14181d; border:1px solid #2a3138; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
-    .content{padding:22px}
-    .content h2,.content h3{margin:18px 0 10px}
-    .content p{line-height:1.6; color:#d9e3ea}
-    .content ul{padding-left:18px; line-height:1.7}
-    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
-    .span-6{grid-column:span 6}
-    .span-4{grid-column:span 4}
-    .tip{border-left:3px solid var(--brand); background:#151a1f; padding:12px 14px; border-radius:10px; font-size:14px}
-
-    .score{
-      display:grid; grid-template-columns:1fr 80px; gap:10px; align-items:center; padding:10px 12px; background:#12161c; border:1px solid #2a3138; border-radius:12px;
+    .top-toggle .seg-thumb{
+      position:absolute;top:var(--seg-pad);bottom:var(--seg-pad);left:var(--seg-pad);
+      width:calc(50% - var(--seg-gap));
+      background:#2b303a;border:1px solid #3f4652;border-radius:var(--seg-thumb-r);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 2px 8px rgba(0,0,0,.35);
+      transition:transform .25s ease;transform:translateX(0%);
     }
-    .meter{height:8px; background:#0e1217; border-radius:999px; overflow:hidden; border:1px solid #2a3138}
-    .meter>span{display:block; height:100%; background:linear-gradient(90deg, #5cd6a7, #f0b90b); width:30%}
+    .top-toggle .toggle-btn{
+      position:relative;z-index:1;height:var(--seg-h);line-height:var(--seg-h);
+      padding:0 8px;font-size:var(--seg-font);font-weight:700;color:#9ba3af;border-radius:var(--seg-thumb-r);
+      letter-spacing:.2px;
+    }
+    .top-toggle .toggle-btn.active{ color:#fff; }
 
-    footer{max-width:1200px; margin:40px auto; padding:0 18px; color:var(--muted); font-size:13px}
-    code{font-family:var(--mono); background:#0f1318; padding:2px 6px; border-radius:6px; border:1px solid #26303a}
-    .muted{color:var(--muted)}
-    .kicker{font-size:13px; color:var(--muted)}
+    .main-nav{display:flex;justify-content:flex-start;gap:10px;margin:2px 0 6px 0}
+    .main-nav button{padding:10px 6px;font-size:14px;color:#A1A6B0}
+    .main-nav button.active{color:#FFF;border-bottom:2px solid #FFF}
+    .main-nav button:first-child{ margin-left:-6px; }
 
-    /* Responsive */
-    @media (max-width: 980px){
-      main{grid-template-columns:1fr}
-      nav.side{position:relative; top:0}
-      .span-6, .span-4{grid-column:span 12}
+    .sub-toggle{display:flex;gap:6px;margin:8px 0 0 0}
+    .sub-toggle .toggle-btn{padding:6px 10px;font-size:12px;color:#A1A6B0;border-radius:6px;background:transparent;}
+    .sub-toggle .toggle-btn.active{background:#323742;color:#FFF}
+
+    .balance-panel{margin:12px 0}
+    .balance-header{display:flex;justify-content:space-between;align-items:center;color:#A1A6B0;font-size:12px}
+    .balance-header span{display:flex;align-items:center;gap:10px}
+    .balance-amount{display:flex;align-items:flex-end;margin:8px 0}
+    .amount{font-size:30px;font-weight:600}
+    .currency{margin-left:8px;color:#A1A6B0;font-size:12px}
+    .realized-pnl{color:#A1A6B0;font-size:12px}
+    .realized-pnl .gain{color:var(--text-green);font-weight:700}
+
+    .small-balances{display:flex;margin-top:12px;justify-content:space-between}
+    .small-item{display:flex;flex-direction:column}
+    .small-item .label{color:#A1A6B0;font-size:12px}
+    .small-item .value{font-size:15px;font-weight:600;margin-top:4px}
+
+    .actions{display:flex;margin:14px 0}
+    .btn{flex:1;padding:10px 0;font-size:14px;margin:0 4px;border-radius:8px;background:#323742;color:#A1A6B0}
+    .btn.primary,.btn.active{background:#F3BA2F;color:#1E2128}
+
+    .sub-nav-2{
+      position:sticky; top:calc(env(safe-area-inset-top, 0px) + 62px);
+      z-index:20; display:flex;align-items:flex-end;gap:16px;margin:0 0 8px 0;
+      background:linear-gradient(var(--bg-base), var(--bg-base));
+      padding-top:6px;
+    }
+    .sub-nav-2 button{position:relative;padding:0 6px 10px;font-size:15px;font-weight:700;letter-spacing:.1px;color:var(--text-secondary);line-height:1}
+    .sub-nav-2 button.active{color:#fff}
+
+    .feed{
+      overflow-y:auto; overscroll-behavior-y: contain;
+      padding:12px 0 20px; background:var(--bg-base);
+      scrollbar-width:none; border-top:none !important;
+      /* Use JS-calculated height for iOS toolbars */
+      max-height: calc((var(--vh) * 100) - 220px);
+    }
+    .feed::-webkit-scrollbar{display:none}
+
+    .empty-state{margin:0 0;background:var(--panel-bg);border-radius:12px;padding:20px;text-align:center;border:1px solid #2b2f36}
+    .empty-state i{font-size:28px;opacity:.9;margin-bottom:10px;display:inline-block}
+    .empty-state h4{font-size:15px;margin-bottom:6px}
+    .empty-state p{font-size:12px;color:#A1A6B0;margin-bottom:12px}
+    .empty-state .cta{background:#F3BA2F;color:#1E2128;font-size:12px;padding:10px 12px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+
+    .trade-panel { background: var(--panel-bg); padding: 12px; border-radius: 10px; border: none; box-shadow: none;
+      margin-left:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
+      margin-right:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
+    }
+    .trade-panel + .trade-panel{margin-top:10px}
+    .trade-panel .header { display: flex; align-items: center; margin-bottom: 8px; }
+    .icon-buy, .icon-sell { color: #fff; width: 22px; height: 22px; display:flex;align-items:center;justify-content:center;
+      font-size: 12px; font-weight: 700; margin-right: 8px; border-radius: 3px; }
+    .icon-buy { background: var(--text-green); }
+    .icon-sell { background: var(--text-red); }
+    .symbol { font-size: 15px; font-weight: 700; margin-right: 6px; color:#fff; }
+    .tag { background: var(--secondary-bg); color: var(--text-secondary); font-size: 10px; padding: 1px 4px; margin-right: 4px; text-transform: uppercase; border-radius: 3px; }
+    .exclamations { display: flex; margin-left: 6px; }
+    .exclamations span { position: relative; width: 2px; height: 10px; background: var(--secondary-bg); margin: 0 1px; border-radius: 1px; transition: background 0.3s ease; }
+    .exclamations span::after { content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); width: 2px; height: 2px; background: inherit; border-radius: 50%; }
+    .exclamations span.green, .exclamations span.green::after { background: var(--text-green); }
+    .share { margin-left: auto; color: var(--text-secondary); font-size: 18px; cursor: pointer; }
+
+    .content-columns { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; gap: 8px; }
+    .column { display: flex; flex-direction: column; }
+    .column.right { text-align: right; }
+    .stat { margin-bottom: 8px; }
+    .label { font-size: 12px; color: var(--text-secondary); border-bottom: 1px dotted var(--text-secondary); padding-bottom: 2px; display: inline-block; }
+    .label.no-line { border-bottom: none; }
+    .value { font-size: 14px; font-weight: 500; color: #fff; transition: all 0.2s ease; }
+    .value.green, .value.percent.green { color: var(--text-green); font-size: 18px; font-weight: 800; }
+    .value.red, .value.percent.red { color: var(--text-red); font-size: 18px; font-weight: 800; }
+    .margin-ratio-value { font-size: 12px !important; }
+
+    .tp-actions{display:flex;justify-content:space-between;gap:8px;margin-top:2px}
+    .tp-btn{flex:1;background:var(--btn-bg);color:#fff;border:none;border-radius:8px;padding:8px 0;font-size:12px;cursor:pointer;transition:background .3s}
+    .tp-btn:hover{background:var(--secondary-bg)}
+
+    /* Bottom nav spans full viewport width but is centered to app width */
+    .bottom-nav{
+      position:fixed;bottom:0;left:0;right:0;margin:0 auto;
+      width:min(var(--app-w), 100vw);
+      background:#2A2F3A;display:flex;padding:8px 0 calc(env(safe-area-inset-bottom, 0px) + 6px);
+      border-top:1px solid #3a3f49; z-index:40;
+    }
+    .bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;font-size:10px;color:#A1A6B0}
+    .bottom-nav button.active{color:#FFF}
+
+    .photo-slot{
+      width:var(--slot-top); height:var(--slot-top);
+      display:inline-block; position:relative; overflow:hidden; border:none; outline:none;
+      background:transparent; border-radius:4px;
+    }
+    .photo-slot--bottom{ width:var(--slot-bottom); height:var(--slot-bottom); border-radius:3px; }
+    .photo-slot input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .photo-slot img{ width:88%; height:88%; margin:6%; object-fit:cover; display:block; border:none; outline:none; background:transparent; image-rendering:auto; }
+    .photo-slot--bottom img{ width:90%; height:90%; margin:5%; object-fit:cover; display:block; }
+    .photo-empty::after{ content:''; position:absolute; inset:0; background:transparent; }
+
+    .pnl-modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.6);
+      display:none; align-items:flex-end; justify-content:center; z-index:1000;
+      padding:0 12px calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 10px);
+    }
+    .pnl-modal-backdrop.open{ display:flex; }
+    .pnl-modal{ position:relative; max-width:min(520px, 100%); width:100%; outline:0; border:0; background:transparent; }
+    .pnl-close{ display:none !important; }
+
+    .pnl-scene{
+      background:#2f343d;
+      border:1px solid #3a3f49;
+      border-radius:18px;
+      padding:12px 12px 16px;
+      margin:0 auto;
+      width:calc(min(350px, 100vw - 32px) + 0px);
+      display:flex; flex-direction:column; align-items:center;
+      box-shadow:0 8px 20px rgba(0,0,0,.35) inset;
+    }
+
+    .pnl-card {
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
+      font-feature-settings:"tnum"1,"lnum"1;
+      letter-spacing:.15px;
+      color:#fff;
+      background:url('https://iili.io/KBlgIse.th.png') no-repeat center/cover;
+      border-radius:16px;
+      width:calc(min(350px, 100vw - 48px));
+      overflow:hidden;
+      box-shadow:0 0 10px rgba(0,0,0,.6);
+      border:2px solid #2e2e2e;
+      position:relative;
+      margin:0 auto;
+    }
+    .pnl-card .card-header { padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .pnl-card .avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex:0 0 40px; }
+    .pnl-card .avatar img { width:100%; height:100%; object-fit:cover; }
+    .pnl-card .username { display:flex; flex-direction:column; }
+    .pnl-card .username span:first-child { font-weight:600; font-size:13px; }
+    .pnl-card .username span:last-child { font-size:11px; opacity:.9; }
+
+    .pnl-card .card-body { padding:0 16px 20px 16px; margin-bottom:6px; }
+    .pnl-card .title { font-size:16px; font-weight:700; text-transform:uppercase; }
+    .pnl-card .position { margin:6px 0 8px; display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:600; }
+    .pnl-card .position .side { color:#ff6b6b; }
+    .pnl-card .position .divider { width:1px; height:12px; background:#6a6a6a; display:inline-block; transform:translateY(1px); }
+    .pnl-card .position .lev { color:#b3b3b3; }
+    .pnl-card .pnl { color:#0ecb81; font-size:32px; font-weight:700; margin:8px 0; letter-spacing:-.5px; }
+    .pnl-card .usdt { font-size:16px; margin-left:4px; font-weight:600; color:#fff; }
+    .pnl-card .prices { display:flex; justify-content:space-between; font-size:12px; margin-top:8px; }
+    .pnl-card .prices .label { color:#888; font-size:11px; }
+    .pnl-card .prices .last { transform:none; } /* prevent overflow on narrow widths */
+
+    .pnl-card .card-footer { background:#000; padding:0; display:block; position:relative; }
+    .pnl-card .footer-line { display:block; width:100%; height:1px; background:#444; margin:0; }
+    .pnl-card .footer-content { padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .pnl-card .footer-left { font-size:12px; display:flex; align-items:center; gap:8px; line-height:1.1; }
+    .pnl-card .footer-left .binance-badge { display:inline-flex; align-items:center; gap:6px; margin-bottom:2px; transform:none; }
+    .pnl-card .footer-left .binance-badge img { width:16px; height:16px; }
+    .pnl-card .footer-left .binance-badge .brand { color:#fcd535; font-weight:800; }
+    .pnl-card .footer-left .futures-ref { transform:none; }
+
+    .pnl-card .qr { width:60px; height:60px; background:#fff; border-radius:6px; overflow:hidden; }
+    .pnl-card .qr img { width:100%; height:100%; object-fit:cover; }
+
+    .pnl-underbar{
+      margin:14px auto 0; width:calc(min(350px, 100vw - 48px));
+      display:flex; flex-direction:column; align-items:flex-start;
+      font-size:13px;
+    }
+    .pnl-underbar .selector { margin:6px 0 10px; display:flex; justify-content:flex-start; gap:20px; font-size:13px; transform:none; }
+    .pnl-underbar .selector label { display:flex; align-items:center; gap:5px; cursor:pointer; }
+    .pnl-underbar .selector input[type="radio"] { accent-color:white; }
+    .pnl-underbar .bottom-bar { display:flex; justify-content:center; gap:10px; margin-top:8px; transform:none; align-self:center; }
+    .pnl-underbar .action {
+      width:48px; height:48px; background:#1b1c22; border:1px solid #2e2f37; border-radius:12px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+      cursor:pointer; transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .pnl-underbar .action:hover { transform:translateY(-2px); background:#242632; border-color:#3a3b47; }
+    .pnl-underbar .action img { width:18px; height:18px; display:block; }
+    .pnl-underbar .action span { font-size:10px; color:#cfd3dc; }
+
+    /* Force digit 1 to Binance PLEX when needed */
+    .pnl-card .one-glyph{
+      font-family: "Binance PLEX", Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
+      font-weight: 700;
+      display:inline-block;
+      letter-spacing: 0;
+      transform: translateY(0.2px);
+    }
+    .no-one-stylize .one-glyph{ font-family: inherit !important; font-weight: inherit !important; }
+
+    /* Tiny style for the first digit of month when it's '1' */
+    .pnl-card .month-one{
+      font-size: .80em;
+      line-height: 1;
+      display:inline-block;
+      transform: translateY(.2px);
+    }
+
+    /* Slight tweaks for very narrow fallback (older iPhones or smaller viewports) */
+    @media (max-width: 390px){
+      :root{ --seg-w: 180px; }
+      .amount{ font-size:28px; }
+      .pnl-card .pnl{ font-size:28px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="h-wrap">
-      <div class="brand">
-        <i class="fa-solid fa-cubes fa-lg"></i>
-        <div>
-          <div>Fundamental Analysis (FA)</div>
-          <small id="subtitle">Long‑term value based on project fundamentals</small>
-        </div>
-      </div>
-      <div class="controls">
-        <label class="kicker" for="lang">Language</label>
-        <select id="lang">
-          <option value="en" selected>English</option>
-          <option value="si">සිංහල (Sinhala)</option>
-          <option value="ta">தமிழ் (Tamil)</option>
-          <optgroup label="More (listed only)">
-            <option disabled>العربية (Arabic)</option>
-            <option disabled>ไทย (Thai)</option>
-            <option disabled>Français (French)</option>
-            <option disabled>Español (Spanish)</option>
-            <option disabled>Deutsch (German)</option>
-          </optgroup>
-        </select>
-        <button id="printBtn" class="icon" title="Print">
-          <i class="fa-solid fa-print"></i><span class="hide-sm">Print</span>
-        </button>
+  <div class="app">
+    <div class="top-stack" id="topStack">
+      <header class="top-toggle" aria-label="Exchange or Wallet">
+        <span class="seg-thumb" aria-hidden="true"></span>
+        <button class="toggle-btn active" type="button">Exchange</button>
+        <button class="toggle-btn" type="button">Wallet</button>
+      </header>
+
+      <nav class="main-nav" aria-label="Main sections">
+        <button>Overview</button>
+        <button class="active">Futures</button>
+        <button>Spot</button>
+        <button>Funding</button>
+      </nav>
+
+      <div class="sub-toggle" role="tablist" aria-label="Futures type">
+        <button class="toggle-btn active" role="tab" aria-selected="true">USDⓢ-M</button>
+        <button class="toggle-btn" role="tab" aria-selected="false">COIN-M</button>
       </div>
     </div>
-  </header>
 
-  <main>
-    <nav class="side">
-      <h4 id="tocTitle">Contents</h4>
-      <a href="#intro">1. Overview</a>
-      <a href="#tokenomics">2. Tokenomics</a>
-      <a href="#team">3. Team &amp; Roadmap</a>
-      <a href="#whitepaper">4. Whitepaper Deep‑Dive</a>
-      <a href="#news">5. News &amp; Sentiment</a>
-      <a href="#workflow">6. Research Workflow</a>
-      <a href="#scoring">7. FA Scoring Model</a>
-      <a href="#redflags">8. Red‑Flags Checklist</a>
-      <a href="#faq">9. FAQ</a>
-    </nav>
+    <section class="balance-panel" aria-label="Balances">
+      <div class="balance-header">
+        <span>Margin Balance <i id="eyeToggle" class="fas fa-eye" aria-hidden="true"></i></span>
+        <span class="icon-group" aria-label="Actions">
+          <label class="photo-slot photo-empty" data-slot="top-reward">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+          <label class="photo-slot photo-empty" data-slot="top-convert">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+          <label class="photo-slot photo-empty" data-slot="top-statement">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+        </span>
+      </div>
 
-    <section>
-      <!-- INTRO -->
-      <article id="intro" class="card">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-regular fa-lightbulb"></i> <span id="introBadge">Primer</span></span>
-            <h1 id="title" style="margin:8px 0 0">Fundamental Analysis (FA) for Crypto Investors</h1>
-            <p id="deck" class="muted" style="margin:8px 0 0">A practical, research‑first framework for evaluating long‑term value beyond short‑term price swings.</p>
-          </div>
-        </header>
-        <div class="content">
-          <div id="introBody"></div>
-          <div class="tip" id="tipGeneral" style="margin-top:14px"></div>
+      <div class="balance-amount">
+        <span id="amount" class="amount">Loading…</span>
+        <span class="currency">USD <i class="fas fa-chevron-down" aria-hidden="true"></i></span>
+      </div>
+
+      <div class="realized-pnl" id="pnl">
+        Today’s Realized PNL
+        <span id="realizedSpan" class="gain">Loading…</span>
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </div>
+
+      <div class="small-balances">
+        <div class="small-item">
+          <div class="label">Wallet Balance (USD)</div>
+          <div class="value" id="walletValue">Loading…</div>
         </div>
-      </article>
-
-      <!-- TOKENOMICS -->
-      <article id="tokenomics" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-solid fa-coins"></i> Tokenomics</span>
-            <h2 id="tokTitle">Designing sustainable value</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div class="grid">
-            <div class="span-6">
-              <h3 id="tokSupplyTitle">Supply, Emissions &amp; Distribution</h3>
-              <div id="tokSupply"></div>
-            </div>
-            <div class="span-6">
-              <h3 id="tokUtilityTitle">Utility, Demand &amp; Value Accrual</h3>
-              <div id="tokUtility"></div>
-            </div>
-            <div class="span-6">
-              <h3 id="tokOnchainTitle">On‑chain Health &amp; Data</h3>
-              <div id="tokOnchain"></div>
-            </div>
-            <div class="span-6">
-              <h3 id="tokRisksTitle">Common Pitfalls</h3>
-              <div id="tokRisks"></div>
-            </div>
-          </div>
+        <div class="small-item">
+          <div class="label">Unrealized PNL (USD)</div>
+          <div class="value" id="unrealizedValue">Loading…</div>
         </div>
-      </article>
-
-      <!-- TEAM & ROADMAP -->
-      <article id="team" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-solid fa-people-group"></i> Team &amp; Roadmap</span>
-            <h2 id="teamTitle">People, Governance &amp; Shipping</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="teamBody"></div>
-          <div class="grid" style="margin-top:10px">
-            <div class="span-6">
-              <h3 id="govTitle">Governance &amp; Transparency</h3>
-              <div id="govBody"></div>
-            </div>
-            <div class="span-6">
-              <h3 id="roadmapTitle">Roadmap Reality Check</h3>
-              <div id="roadmapBody"></div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- WHITEPAPER -->
-      <article id="whitepaper" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-regular fa-file-lines"></i> Whitepaper</span>
-            <h2 id="wpTitle">From claims to testable assumptions</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="wpBody"></div>
-        </div>
-      </article>
-
-      <!-- NEWS & SENTIMENT -->
-      <article id="news" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-regular fa-newspaper"></i> News &amp; Sentiment</span>
-            <h2 id="newsTitle">Catalysts, narratives and risk</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div class="grid">
-            <div class="span-6">
-              <h3 id="catTitle">Catalysts to track</h3>
-              <div id="catBody"></div>
-            </div>
-            <div class="span-6">
-              <h3 id="sentTitle">Sentiment &amp; Narrative</h3>
-              <div id="sentBody"></div>
-            </div>
-          </div>
-          <div class="tip" id="tipNews" style="margin-top:14px"></div>
-        </div>
-      </article>
-
-      <!-- WORKFLOW -->
-      <article id="workflow" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-solid fa-list-check"></i> Workflow</span>
-            <h2 id="wfTitle">Step‑by‑step research process</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="wfBody"></div>
-        </div>
-      </article>
-
-      <!-- SCORING MODEL -->
-      <article id="scoring" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-solid fa-gauge"></i> FA Score</span>
-            <h2 id="scoreTitle">Lightweight scoring model (0–100)</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="scoreBody"></div>
-          <div class="score" style="margin-top:12px">
-            <div>
-              <div class="muted" id="scoreHint">Example combined score</div>
-              <div class="meter"><span id="meterFill" style="width:72%"></span></div>
-            </div>
-            <strong style="text-align:right" id="scoreNumber">72</strong>
-          </div>
-        </div>
-      </article>
-
-      <!-- REDFLAGS -->
-      <article id="redflags" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Red‑flags</span>
-            <h2 id="rfTitle">Quick diligence checklist</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="rfBody"></div>
-        </div>
-      </article>
-
-      <!-- FAQ -->
-      <article id="faq" class="card" style="margin-top:20px">
-        <header>
-          <div class="c-title">
-            <span class="badge"><i class="fa-regular fa-circle-question"></i> FAQ</span>
-            <h2 id="faqTitle">Common questions</h2>
-          </div>
-        </header>
-        <div class="content">
-          <div id="faqBody"></div>
-        </div>
-      </article>
-
+      </div>
     </section>
-  </main>
 
-  <footer>
-    <div id="footNote">Educational content only — not financial advice. DYOR. Last updated: 29 Aug 2025.</div>
-  </footer>
+    <section class="actions" aria-label="Quick actions">
+      <button class="btn primary active">Trade</button>
+      <button class="btn">Swap</button>
+      <button class="btn">Transfer</button>
+    </section>
+
+    <section class="positions" aria-label="Positions">
+      <nav class="sub-nav-2" id="stickyBar">
+        <button class="active">Positions</button>
+        <button>Assets</button>
+      </nav>
+
+      <div class="feed" id="feed">
+        <div class="empty-state" id="emptyState">
+          <i class="fa-solid fa-briefcase"></i>
+          <h4>You have no open positions</h4>
+          <p>Start a trade to see it listed here in real-time.</p>
+          <button class="cta"><i class="fa-solid fa-plus"></i> Open a Trade</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Bottom navigation" id="bottomNav">
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-home">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Home</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-markets">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Markets</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-trade">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Trade</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-futures">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Futures</span>
+      </button>
+      <button class="active">
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-assets">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Assets</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ===================== SHARE MODAL ===================== -->
+  <div class="pnl-modal-backdrop" id="pnlBackdrop" aria-hidden="true">
+    <div class="pnl-modal" role="dialog" aria-modal="true" aria-labelledby="pnlTitle">
+      <div class="pnl-scene">
+        <div class="pnl-card" id="pnlCard">
+          <div class="card-header">
+            <div class="avatar">
+              <img src="https://iili.io/KnMWtFs.th.png" alt="User Avatar">
+            </div>
+            <div class="username">
+              <span id="pnlUser">Prasadnuwankumara</span>
+              <span id="pnlTime">—</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="title" id="pnlTitle">—</div>
+            <div class="position">
+              <span class="side" id="pnlSide">—</span>
+              <span class="divider" aria-hidden="true"></span>
+              <span class="lev" id="pnlLev">—</span>
+            </div>
+            <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
+            <div class="prices">
+              <div class="entry">
+                <div class="label">Entry Price</div>
+                <div id="pnlEntry">—</div>
+              </div>
+              <div class="last">
+                <div class="label">Last Price</div>
+                <div id="pnlLast">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="footer-line"></span>
+            <div class="footer-content">
+              <div class="footer-left">
+                <div>
+                  <div class="binance-badge">
+                    <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
+                    <span class="brand">BINANCE</span>
+                  </div>
+                  <div class="futures-ref">FUTURES</div>
+                  <div class="futures-ref">Referral Code 347589235</div>
+                </div>
+              </div>
+              <div class="qr">
+                <img src="https://iili.io/KXDgMAv.jpg" alt="QR Code">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pnl-underbar">
+          <div class="selector">
+            <label><input type="radio" name="infoMode" value="PNL" checked> PNL</label>
+            <label><input type="radio" name="infoMode" value="ROI"> ROI</label>
+            <label><input type="radio" name="infoMode" value="BOTH"> PNL & ROI</label>
+          </div>
+
+          <div class="bottom-bar" id="pnlActions">
+            <div class="action" title="Save"><img src="https://img.icons8.com/ios-glyphs/60/download--v1.png" alt="Save"><span>Save</span></div>
+            <div class="action" title="Copy"><img src="https://img.icons8.com/ios-glyphs/60/link--v1.png" alt="Copy"><span>Copy</span></div>
+            <div class="action" title="Telegram"><img src="https://img.icons8.com/color/60/telegram-app--v1.png" alt="Telegram"><span>Telegram</span></div>
+            <div class="action" title="Instagram"><img src="https://img.icons8.com/color/60/instagram-new--v1.png" alt="Instagram"><span>Instagram</span></div>
+            <div class="action" title="More"><img src="https://img.icons8.com/ios-glyphs/60/more.png" alt="More"><span>More</span></div>
+          </div>
+        </div>
+      </div><!-- /pnl-scene -->
+    </div>
+  </div>
+  <!-- =================== / SHARE MODAL =================== -->
 
   <script>
-    // Text content in three languages: EN, SI, TA
-    const copy = {
-      en:{
-        subtitle:"Long‑term value based on project fundamentals",
-        toc:"Contents", introBadge:"Primer",
-        title:"Fundamental Analysis (FA) for Crypto Investors",
-        deck:"A practical, research‑first framework for evaluating long‑term value beyond short‑term price swings.",
-        introBody:`<p>Fundamental Analysis (FA) is the discipline of estimating a project’s <strong>intrinsic, long‑term value</strong> by studying what it builds, how it is governed, and why its token should capture value. In crypto, prices can move violently in the short run; FA gives you an anchor: <em>understand the machine, not just the meter</em>. This guide focuses on four pillars—<strong>Tokenomics</strong>, <strong>Team & Roadmap</strong>, <strong>Whitepaper</strong>, and <strong>News & Sentiment</strong>—with checklists, a research workflow, and a lightweight scoring model you can adapt to any coin.</p>
-        <p>Use FA alongside Technical Analysis (TA). TA times entries; FA decides <em>whether</em> an asset deserves your capital at all. The goal isn’t to predict exact prices but to <strong>stack asymmetry</strong>: identify projects with durable demand, clear value capture, and credible shipping.</p>`,
-        tipGeneral:`<strong>TL;DR:</strong> Prefer projects with <em>clear utility</em>, <em>disciplined emissions</em>, <em>credible teams</em>, <em>transparent governance</em>, and <em>positive real‑world traction</em>.` ,
+    /* ===== Mobile 100vh fix for iOS Safari toolbars ===== */
+    function setVH(){
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', vh + 'px');
+    }
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+    document.addEventListener('DOMContentLoaded', setVH);
 
-        // Tokenomics
-        tokTitle:"Designing sustainable value",
-        tokSupplyTitle:"Supply, Emissions & Distribution",
-        tokSupply:`<ul>
-          <li><strong>Supply schedule:</strong> Fixed cap (e.g., 1B) vs. inflationary. Look for predictable, <em>slow</em> emissions with cliffs and linear unlocks that avoid constant sell pressure.</li>
-          <li><strong>Initial allocation:</strong> Founders, investors, treasury, community. Excessive insider share (>50%) is a red flag unless locks and <em>long</em> vesting are enforced.</li>
-          <li><strong>Unlock calendar:</strong> Map monthly unlocks; overlay them with liquidity and upcoming catalysts. Heavy unlocks into weak demand often depress price.</li>
-          <li><strong>Treasury policy:</strong> How are funds managed? Transparent reporting, multisig controls, and public budgeting indicate maturity.</li>
-        </ul>`,
-        tokUtilityTitle:"Utility, Demand & Value Accrual",
-        tokUtility:`<ul>
-          <li><strong>Core utility:</strong> Fee payment, staking for security, collateral, governance, or access. Ask: could the product work <em>without</em> the token? If yes, value capture may be weak.</li>
-          <li><strong>Value accrual:</strong> Buy‑and‑burn, fee share to stakers, or economic sinks (rent, access deposits). Avoid designs where usage does not loop back to the token.</li>
-          <li><strong>Demand drivers:</strong> Real users, dev adoption, integrations, and <em>recurring</em> B2B demand beat speculation‑only cycles.</li>
-          <li><strong>Velocity control:</strong> Incentives that reduce immediate selling—lockups, time‑weighted rewards, or staking that <em>actually matters</em>.</li>
-        </ul>`,
-        tokOnchainTitle:"On‑chain Health & Data",
-        tokOnchain:`<ul>
-          <li><strong>Active addresses & retention:</strong> Are users returning? Spikes are easy; retention is hard.</li>
-          <li><strong>Fees & revenue:</strong> Protocol fees (not token price) indicate real demand. Compare revenue to incentives spent.</li>
-          <li><strong>TVL & concentration:</strong> Sustainable TVL comes from sticky use‑cases, not mercenary incentives. Check whale share and smart‑contract risks.</li>
-          <li><strong>Liquidity & listings:</strong> Depth across CEX/DEX, slippage at $10k/$100k size, and credible market‑makers.</li>
-        </ul>`,
-        tokRisksTitle:"Common Pitfalls",
-        tokRisks:`<ul>
-          <li>High fully diluted valuation (FDV) with tiny float → easy to manipulate; post‑unlock gravity.</li>
-          <li>Unclear utility; token added last‑minute to raise funds.</li>
-          <li>Opaque treasuries, weak security practices, or unaudited core contracts.</li>
-        </ul>`,
+    /* ===== Segmented control ===== */
+    (function(){
+      const wrap = document.querySelector('.app .top-toggle');
+      const btns  = [...wrap.querySelectorAll('.toggle-btn')];
+      const thumb = wrap.querySelector('.seg-thumb');
+      const setActive = (i) => { btns.forEach((b,idx)=> b.classList.toggle('active', idx===i)); thumb.style.transform = `translateX(${i*100}%)`; };
+      setActive(0); btns.forEach((b,i)=> b.addEventListener('click',()=>setActive(i)));
+    })();
 
-        // Team & Roadmap
-        teamTitle:"People, Governance & Shipping",
-        teamBody:`<p>Teams create value by <strong>shipping</strong>. Study founders’ track records, open‑source contributions, hiring quality, and culture. Public roadmaps are cheap; delivered milestones are priceless. Prefer teams that share metrics, write postmortems, and iterate with users.</p>`,
-        govTitle:"Governance & Transparency",
-        govBody:`<ul>
-          <li><strong>Ownership & control:</strong> Multisigs with named signers, clear upgrade processes, and credible security councils.</li>
-          <li><strong>DAO quality:</strong> Quorums, voter participation, proposal quality, and treasury reporting cadence.</li>
-          <li><strong>Legal posture:</strong> Jurisdiction, token classification risk, KYC/AML exposure for core products.</li>
-        </ul>`,
-        roadmapTitle:"Roadmap Reality Check",
-        roadmapBody:`<ul>
-          <li>Compare promises vs. shipped releases in the last 6–12 months.</li>
-          <li>Look for <em>compounding</em> releases—SDKs, dev grants, integrations—that grow ecosystems.</li>
-          <li>Assess runway: cash, stablecoin reserves, burn rate, and contingency planning.</li>
-        </ul>`,
+    /* ===== Layout sizing ===== */
+    function sizeFeed(){
+      const feed = document.getElementById('feed');
+      const stickyBar = document.getElementById('stickyBar');
+      const bottomNav = document.getElementById('bottomNav');
+      const topStack  = document.getElementById('topStack');
+      if(!feed || !stickyBar || !bottomNav || !topStack) return;
 
-        // Whitepaper
-        wpTitle:"From claims to testable assumptions",
-        wpBody:`<p>Read the whitepaper like an investor <em>and</em> an engineer. Extract assumptions and turn them into tests:</p>
-        <ul>
-          <li><strong>Problem statement:</strong> What pain is solved? For whom? How big is the market?</li>
-          <li><strong>Architecture:</strong> Consensus, data availability, security model, and trust assumptions. Are trade‑offs explicit?</li>
-          <li><strong>Incentive design:</strong> Who pays whom, when, and why? Model edge cases and griefing strategies.</li>
-          <li><strong>Value capture:</strong> Draw the flow of fees and emissions; highlight where the token accrues value.</li>
-          <li><strong>Roadmap & risks:</strong> What could fail? Are timelines realistic? Are audits referenced?</li>
-        </ul>
-        <p>Good papers translate into <strong>clear specs</strong>, public repos, and testnets with measurable KPIs. If the whitepaper cannot be mapped to running code, treat claims as marketing.</p>`,
+      const topOffset = Math.ceil(topStack.getBoundingClientRect().height + 8 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)'))||0));
+      stickyBar.style.top = `calc(env(safe-area-inset-top, 0px) + 62px)`;
 
-        // News & Sentiment
-        newsTitle:"Catalysts, narratives and risk",
-        catTitle:"Catalysts to track",
-        catBody:`<ul>
-          <li>Mainnet/feature launches, L2 migrations, staking upgrades, fee‑switch proposals.</li>
-          <li>Listings, partnerships, enterprise pilots, and integrations with major wallets or chains.</li>
-          <li>Regulatory actions, security incidents, or sudden treasury moves.</li>
-        </ul>`,
-        sentTitle:"Sentiment & Narrative",
-        sentBody:`<p>Crypto runs on <em>narratives</em>: scaling, restaking, RWAs, gaming, AI‑x‑crypto, privacy. Narratives attract liquidity but rotate fast. Track social momentum, but confirm with <strong>usage data</strong>. When sentiment is euphoric and metrics diverge, risk rises.</p>`,
-        tipNews:`<strong>Pro tip:</strong> Build a watchlist calendar. Pre‑position only when <em>fundamentals + catalysts</em> align; avoid chasing after the announcement effect.`,
+      const barH = stickyBar.getBoundingClientRect().height || 42;
+      const bottomH = bottomNav.getBoundingClientRect().height || 64;
 
-        // Workflow
-        wfTitle:"Step‑by‑step research process",
-        wfBody:`<ol>
-          <li><strong>Scope:</strong> Define the use‑case and competitors.</li>
-          <li><strong>Read:</strong> Website, docs, whitepaper; collect metrics (users, fees, TVL).</li>
-          <li><strong>Model tokenomics:</strong> Supply schedule, unlocks, value capture; approximate FDV at various scenarios.</li>
-          <li><strong>Check team:</strong> Repos, commits, audits, hiring, previous exits.</li>
-          <li><strong>Map catalysts:</strong> Next 3–6 months: releases, listings, governance votes.</li>
-          <li><strong>Score:</strong> Use the rubric below; write a one‑page thesis.</li>
-          <li><strong>Risk plan:</strong> Position sizing, invalidation points, treasury diversification.</li>
-        </ol>`,
+      const vh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vh')) || (window.innerHeight * 0.01);
+      const screenH = 100 * vh;
 
-        // Scoring
-        scoreTitle:"Lightweight scoring model (0–100)",
-        scoreBody:`<p>Allocate weights and score each pillar from 0–5.</p>
-        <ul>
-          <li>Tokenomics (×4) — emissions, utility, value capture, liquidity.</li>
-          <li>Team & Governance (×3) — execution, transparency, security culture.</li>
-          <li>Product‑Market Fit (×3) — usage growth, retention, revenue quality.</li>
-          <li>Narrative & Catalysts (×2) — roadmap credibility, near‑term events.</li>
-        </ul>
-        <p><em>Example:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>. Adjust weights to your strategy (e.g., long‑term investors may down‑weight near‑term catalysts).</p>`,
-        scoreHint:"Example combined score",
+      const available = screenH - (topOffset + barH) - bottomH - 16;
+      feed.style.height = Math.max(140, available) + 'px';
+      feed.style.maxHeight = feed.style.height;
+    }
+    window.addEventListener('resize', sizeFeed);
+    document.addEventListener('DOMContentLoaded', sizeFeed);
 
-        // Red flags
-        rfTitle:"Quick diligence checklist",
-        rfBody:`<ul>
-          <li>Anonymous treasury control; no audits for core contracts.</li>
-          <li>FDV >$5B with float < 5% and heavy unlocks in 3 months.</li>
-          <li>Token utility unclear; promises of APY without source of revenue.</li>
-          <li>Outsized marketing vs. engineering; plagiarized docs.</li>
-        </ul>`,
+    /* ===== Top panel utils ===== */
+    const fmtMoney = (n) =>
+      "$" + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = (n) => (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
 
-        // FAQ
-        faqTitle:"Common questions",
-        faqBody:`<p><strong>Q:</strong> Can a token appreciate without direct value accrual? <br><strong>A:</strong> Yes, for a time—via speculation—but durable appreciation usually needs explicit capture (fees, burns, staking).</p>
-        <p><strong>Q:</strong> Should I avoid high FDV entirely?<br><strong>A:</strong> Not always. If growth is explosive <em>and</em> unlock overhang is modest, high FDV can be justified. But manage size and timing.</p>
-        <p><strong>Q:</strong> What if the team is anonymous?<br><strong>A:</strong> Some landmark projects started pseudonymous. Compensate with stronger evidence: public audits, open‑source code, and time‑tested security.</p>`
-      },
+    const amountEl = document.getElementById("amount");
+    const walletEl = document.getElementById("walletValue");
+    const unrealEl = document.getElementById("unrealizedValue");
+    const realizedSpan = document.getElementById("realizedSpan");
+    const eye = document.getElementById("eyeToggle");
 
-      si:{
-        subtitle:"ක්‍රියාවලියෙහි දීර්ඝ කාලීන වටිනාකම — මූලික කරුණු මත",
-        toc:"අන්තර්ගතය", introBadge:"දැනුම්දීම",
-        title:"ක්‍රිප්ටෝ වසර සඳහා මූලික විශ්ලේෂණය (FA)",
-        deck:"කෙටි කාලීන මිල වෙනස්වීම්වලට පමණක් අලුයමක් නොව, ව්‍යාපෘතියේ මූලික බලකායන් තේරුම් ගැනීම මගින් දිගු කාලීන වටිනාකම ඇගයීමට මෙය කාර්යක්ෂම රාමුවකි.",
-        introBody:`<p>මූලික විශ්ලේෂණය (FA) යනු ව්‍යාපෘතියක් <strong>සිටින්නට ඇති ඇතුල්ම වටිනාකම</strong> ඇගයීමයි. එය <em>කොහොමද ඉදිකළේ</em>, <em>කවුද පාලනය කරන්නේ</em>, <em>ටෝකනයට වටිනාකම පිටතට අල්ලා ගැනීමට හේතුව මොකක්ද</em> යන්නවලට තුන්දහ නියම කරයි. ක්‍රිප්ටෝ මිල කෙටි කාලයේ ඉහළ‑පහළ වෙයි; එබැවින් FA ඔබට ආධාර වන්නේ <em>මසිනාව තේරුම් ගැනීමටයි</em>. මෙහි අවධානය <strong>ටෝකනොමික්ස්</strong>, <strong>කණ්ඩායම හා මාර්ගසටහන</strong>, <strong>වයිට්පේපරය</strong>, සහ <strong>පුවත් හා සංවේගය</strong> යන ස්ථම්භ 4ටයි.</p>
-        <p>FA, TA සමඟ යොදන්න. TA ප්‍රවේශ/නික්මීම් කාලය සොයයි; FA විසින් දීර්ඝව කල් තබා ගැනීමට සුදුසුදැයි තීරණය කරයි. අභිප්‍රායය වන්නේ නිවැරදි මිල පුරෝකථනය නොව <strong>අසාමාන්‍ය වාසි</strong> සොයන එකයි.</p>`,
-        tipGeneral:`<strong>යෝජනා:</strong> <em>හැකිලූ නිකුත් කිරීම්</em>, <em>පැහැදිලි භාවිතිතා</em>, <em>ගිරිමාන පාලනය</em>, <em>විවෘත පාලනය</em> සහ <em>බිහිවෙන සැබෑ භාවිතය</em> ඇති ව්‍යාපෘති අගය කරන්න.` ,
+    let showTop = true;
+    let realizedTodayUSD = 0;
+    let realizedTodayPct = 0;
+    let walletBalance = 0;
+    let unrealizedSum = 0;
 
-        tokTitle:"ස්ථිර වටිනාකමක් සැලසුම් කිරීම",
-        tokSupplyTitle:"විතර, නිකුත් කිරීම හා බෙදාහැරීම",
-        tokSupply:`<ul>
-          <li><strong>සැපයුම් වේලාව:</strong> ස්ථිර සීමාවක්ද නැත්නම් ප්‍රතිසංවර්ධන ද? අඛණ්ඩ විවේක සහ ලිනියර් අන්ලොක් සමග <em>පහසු</em> නිකුත් කිරීම් වඩා සෞඛ්‍යකරය.</li>
-          <li><strong>ආරම්භික ප්‍රතිපත්තිය:</strong> ස්ථාපකයින්/ආයෝජකයින්/සාහිත්‍ය කෝෂ/ප්‍රජාව. අභ්‍යන්තර අංශය හදාරි (>50%) නම් දිගු වස්තියෙන් වැසී සිටීමට ඕනෑ.</li>
-          <li><strong>අන්ලොක් දිනදර්ශනය:</strong> මාසික අන්ලොක් සන්නිවේදනය කරලා දමා ඇති ද? දුර්වල ඉල්ලුමකට එරෙහිව අධික අන්ලොක් → මිල පීඩනය.</li>
-          <li><strong>කෝෂ කළමනාකරණය:</strong> විවෘත වාර්තා, මල්ටිසිග් පාලනය, පොදු අයවැය — පරිපక్వ සංස්කෘතියේ ලකුණ.</li>
-        </ul>`,
-        tokUtilityTitle:"භාවිතිතා, ඉල්ලුම හා වටිනාකම් අල්ලා ගැනීම",
-        tokUtility:`<ul>
-          <li><strong>මූලික භාවිතය:</strong> ගාස්තු ගෙවීම, ආරක්ෂාව සඳහා ස්ටේකින්, කොල්ලටරල්, පාලන, ප්‍රවේශය. ටෝකනය <em>අවශ්‍ය නැතිව</em> දර්ශකය ක්‍රියා කරයි නම් අල්ලා ගැනීම දුර්වලයි.</li>
-          <li><strong>අල්ලා ගැනීම:</strong> බයි‑එන්ඩ්‑බර්න්, ෆී බෙදාගැනීම, ආර්ථික සිංක්. භාවිතය ටෝකනය වෙත නැවත පටල් නොබදින ආකෘති වලින් වැළකින්න.</li>
-          <li><strong>ඉල්ලුම් ධාවක:</strong> සැබෑ පරිශීලකයන්, සංවර්ධක ඒකාබද්ධතා, නැවත නැවත අවබෝධය.</li>
-          <li><strong>වේග පාලනය:</strong> වහාම වික්‍රය කිරීම අඩු කරන උප්පැන්න — කාලය පදනම් කරගත් බෙදාහැරීම්, අර්ථවත් ස්ටේකින්.</li>
-        </ul>`,
-        tokOnchainTitle:"ශ්‍රේණියෙහි සෞඛ්‍යය",
-        tokOnchain:`<ul>
-          <li><strong>ක්‍රියාකාරී ලිපින හා තබා ගැනීම:</strong> නැවත පැමිණීම පරීක්‍ෂා කරන්න.</li>
-          <li><strong>ගාස්තු/آمدන:</strong> ටෝකන් මිල නොව, ප්‍රොටොකෝල ගාස්තු සැබෑ ඉල්ලුම පෙන්වයි.</li>
-          <li><strong>TVL හා ඒකාග්‍රතාව:</strong> "ලෙඩුදැඩුව" මුදාහැරීමක් ද? වෙල් ප්‍රමාණය/කොන්ත්‍රාත් අවදානම් පරීක්ෂා කරන්න.</li>
-          <li><strong>ද್ರවතාවය:</strong> CEX/DEX ගැඹුරුකම, $10k/$100k ස්ලිප්පේජ්, විශ්වාසවන්ත MM.</li>
-        </ul>`,
-        tokRisksTitle:"සාමාන්‍ය දෝෂ",
-        tokRisks:`<ul>
-          <li>අඩු පාවිච්චි වන ප්‍රවාහයක් සමඟ ඉහළ FDV → අන්ලොක් පසු වර්ජනය.</li>
-          <li>අස්පෂ්ට භාවිතය; අවසානයේ ටෝකනය එක්කර මුදල් එකතු කිරීම.</li>
-          <li>අවිවෘත කෝෂ, අඩු ආරක්ෂාව, ප්‍රධාන කොන්ත්‍රාත් නොපරීක්ෂා කර තිබීම.</li>
-        </ul>`,
+    function refreshTop(){
+      amountEl.textContent   = showTop ? fmtMoney(walletBalance + unrealizedSum) : "•••••••";
+      walletEl.textContent   = showTop ? fmtMoney(walletBalance) : "•••••••";
+      unrealEl.textContent   = showTop ? fmtMoney(unrealizedSum) : "•••••••";
+      realizedSpan.textContent = showTop ? `${fmtMoney(realizedTodayUSD)} (${fmtPct(realizedTodayPct)})` : "•••••••";
+    }
+    eye.addEventListener("click", ()=>{ showTop = !showTop; eye.classList.toggle("fa-eye-slash", !showTop); eye.classList.toggle("fa-eye", showTop); refreshTop(); });
 
-        teamTitle:"මිනිසුන්, පාලනය හා නිෂ්පාදනය",
-        teamBody:`<p>අගය නිර්මාණය කරන්නේ <strong>බಿಡ්ඩා දියත් කිරීමෙන්</strong>. පිටපත නොව ගුණාත්මක සංවර්ධනය, නිරන්තර ප්‍රසිද්ධ වාර්තා, පරිශීලක ප්‍රතිචාරය මත ඉංජිනේරු වඩපිහිට — මේවා සොයන්න.</p>`,
-        govTitle:"පාලනය හා පැහැදිලි බව",
-        govBody:`<ul>
-          <li><strong>හිමිකම්/පාලනය:</strong> නම් දැක්වූ මල්ටිසිග්, ප්‍රකාශිත අනුත්ස්කරණ ක්‍රියා පටිපාටි, ආරක්ෂක සභා.</li>
-          <li><strong>DAO ගුණාත්මකභාවය:</strong> කොරම්, ඡන්දගත වීම, යෝජනා ගුණය, කෝෂ වාර්තා.</li>
-          <li><strong>නීතිමය තත්ත්වය:</strong> නීති අයකිරීම් අවදානම, KYC/AML බලපෑම.</li>
-        </ul>`,
-        roadmapTitle:"මාර්ගසටහන් යථාර්ථ පරීක්ෂාව",
-        roadmapBody:`<ul>
-          <li>පසු මාස 6–12 ක කාලයේ පොරොන්දු vs. නිමවුම් වල සංසන්දනය කරන්න.</li>
-          <li>SDK/අනුබද්ධතා/ඩිවලොපර් අරමුදල් වැනි <em>සංයෝජිත</em> දියත් කිරීම් සොයන්න.</li>
-          <li>රන්වේ: මූල්‍ය තොග, බර නොමැතිව ඵලදායී වියදම්, සංඛ්‍යාත වාර්තා.</li>
-        </ul>`,
+    /* ===== Helper fns ===== */
+    const numberWithCommas = (x) => String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const toFixedSafe = (n, dp) => { const num = Number(n); if (!Number.isFinite(num)) return (0).toFixed(dp); const m = Math.pow(10, dp); return (Math.round(num * m) / m).toFixed(dp); };
+    const dpFromTick = (tickStr) => { const idx = (tickStr || '').indexOf('.'); if (idx === -1) return 0; return tickStr.length - idx - 1; };
+    const quantizeToTick = (price, tickSize) => { const step = parseFloat(tickSize); if (!isFinite(price) || !isFinite(step) || step <= 0) return price; return Math.round(price / step) * step; };
+    const quantizeDownToStep = (qty, stepSize) => { const step = parseFloat(stepSize); if (!isFinite(qty) || !isFinite(step) || step <= 0) return qty; return Math.floor(qty / step) * step; };
+    function joinIntDec(i, d) { const I = numberWithCommas(i); return d !== undefined ? I + '.' + d : I; }
+    function shuffle(arr){ for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j]]; } return arr; }
+    const randInt = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
 
-        wpTitle:"ප්‍රකාශන → පරීක්ෂා කළ හැකි උපකල්පන",
-        wpBody:`<p>වයිට්පේපරය ආයෝජකයෙකු සහ ඉංජිනේරුවෙකු ලෙස කියවන්න. අනුවාද සකස් කර පරීක්ෂණ බවට හැරවීම:</p>
-        <ul>
-          <li><strong>ගැටලුව:</strong> කාට? කොපමණ වෙළඳපොළක්?</li>
-          <li><strong>පිරිවිතර:</strong> එකඟතාවය/ආරක්ෂාව/නඩුව; ත්‍යාගයන් පැහැදිලිද?</li>
-          <li><strong>ප්‍රෝත්සාහන:</strong> කාගේ වෙත කවදා මුදල් ගෙනෙයි? අසීමිත සංයෝග වලින් බිඳේද?</li>
-          <li><strong>අල්ලා ගැනීම:</strong> ගාස්තු සහ නිකුත් කිරීම් ප්‍රවාහ සිතියම් අදින්න.</li>
-          <li><strong>අපයාස:</strong> අසාර්ථක විය හැකි දේ? audit/පරීක්ෂණ සඳහන්ද?</li>
-        </ul>
-        <p>හොඳ වයිට්පේපර → <strong>පැහැදිලි විශේෂණ</strong>, විවෘත කේත, KPIs සහිත පරීක්ෂණ ජාල.</p>`,
+    function formatProfit(_sym, x) {
+      const s = toFixedSafe(x, 2);
+      const [i, d] = s.split('.');
+      return joinIntDec(i, d);
+    }
+    function formatSignedProfit(sym, x){
+      const abs = Math.abs(Number(x) || 0);
+      return (x >= 0 ? '+' : '-') + formatProfit(sym, abs);
+    }
+    function formatTwoDP(x) { const s = toFixedSafe(x, 2); const [i, d] = s.split('.'); return joinIntDec(i, d); }
 
-        newsTitle:"ප්‍රබලකාරක, කථාබන්ධන හා අවදානම",
-        catTitle:"අවධානය යොමු කළ යුතු ප්‍රබලකාරක",
-        catBody:`<ul>
-          <li>මැයින්නෙට්/විශේෂාංග, L2 මාරු, ෆී‑ස්විච් යෝජනා.</li>
-          <li>ලැයිස්තුගත වීම, හවුල්කාරිත්වය, ප්‍රධාන වෙල්ට්/චේන් ඒකාබද්ධතා.</li>
-          <li>නියාමන ක්‍රියාමාර්ග, ආරක්ෂක සිදුවීම්, කෝෂ ප්‍රචලන.</li>
-        </ul>`,
-        sentTitle:"සංවේගය හා ප්‍රවණතා",
-        sentBody:`<p>ක්‍රිප්ටෝ කථාබන්ධන මත ධාවනය වෙයි: ස්කේලින්, රි‑ස්ටේකින්, RWA, ගේමින්, AI‑x‑ක්‍රිප්ටෝ, පෞද්ගලිකත්වය. සංවේගය ශක්තිමත් වූ විට දත්ත සමඟ තහවුරු කරන්න.</p>`,
-        tipNews:`<strong>උපදේශය:</strong> Ivant list/දිනදර්ශනය තබා ගන්න. මූලික + ප්‍රබලකාරක එකට ගැලපේන විට පමණක් ස්ථානය ගන්න.` ,
-
-        wfTitle:" පියවරෙන්‑පියවර පර්යේෂණ ක්‍රියාවලිය",
-        wfBody:`<ol>
-          <li><strong>විෂය නිර්වචනය:</strong> භාවිතය/පිරිස/අලුත්කරුවන්.</li>
-          <li><strong>කියවීම:</strong> සෞම්‍ය ලිපිගොනු/වයිට්පේපර/මිනිත්තු; ප්‍රමාණ (පරිශීලක, ගාස්තු, TVL) එකතු කරන්න.</li>
-          <li><strong>ටෝකනොමික්ස්:</strong> සැපයුම/අන්ලොක්/අල්ලා ගැනීම; FDV ඵලදාව මොකද්ද?</li>
-          <li><strong>කණ්ඩායම:</strong> රෙපෝ/කමිට්/ආරක්ෂක වාර්තා/කාර්ය මණ්ඩලය.</li>
-          <li><strong>ප්‍රබලකාරක:</strong> මස 3–6: නිකුත් කිරීම්, ලැයිස්තු, පාලන ඡන්ද.</li>
-          <li><strong>අග හා ලේඛනය:</strong> පූර්වනිර්ණිත සකස් කිරීම්/තීසි.</li>
-          <li><strong>අවදානම:</strong> තනතුරේ ප්‍රමාණය, අවිශ්වාස ස්ථාන, කෝෂ විවිධීකරණය.</li>
-        </ol>`,
-
-        scoreTitle:"සරල ලකුණුකරණ ආකෘතිය (0–100)",
-        scoreBody:`<p>පහත ස්ථම්භ වලට 0–5 දක්වා ලකුණු දෙන්න; බර ලබාදෙන්න.</p>
-        <ul>
-          <li>ටෝකනොමික්ස් (×4)</li>
-          <li>කණ්ඩායම/පාලනය (×3)</li>
-          <li>නිෂ්පාදන‑විපණන ගැළපීම (×3)</li>
-          <li>කථාබන්ධන/ප්‍රබලකාරක (×2)</li>
-        </ul>
-        <p><em>උදාහරණය:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>.</p>`,
-        scoreHint:"උදාහරණ එකතුව",
-
-        rfTitle:"ද්‍රුත පිරික්සුම",
-        rfBody:`<ul>
-          <li>නම් නොදන්නා කෝෂ පාලනය; ප්‍රධාන කොන්ත්‍රාත් audit නැතිව.</li>
-          <li>FDV ඉහළ; කුඩා ෆ්ලෝට්; නිකුත් අධික මාස තුනක් ඇතුළත.</li>
-          <li>අස්පෂ්ට භාවිතය; මූලාශ්‍ර නැති APY පොරොන්දු.</li>
-          <li>ඉංජිනේරුට වඩා අතිරික්ත ප්‍රචාරකය.</li>
-        </ul>`,
-
-        faqTitle:"නිතර අසන ප්‍රශ්න",
-        faqBody:`<p><strong>ප්‍ර:</strong> වටිනාකම අල්ලා නොගන්නා ටෝකනයක් ඉහළ යා හැකිද?<br><strong>පි:</strong> කාලිකව හැක. නමුත් දීර්ඝ කාලය සඳහා පැහැදිලි අල්ලා ගැනීමක් (fees/burn/stake) අනෙකුත්.</p>
-        <p><strong>ප්‍ර:</strong> ඉහළ FDV සම්පූර්ණයෙන් වැළැක්විය යුතුද?<br><strong>පි:</strong> නෑ. ඉතා ඉහළ වර්ධනයක් ඇතිවූ විට සහ අන්ලොක් අඩු නම් යුක්ත විය හැක.</p>
-        <p><strong>ප්‍ර:</strong> කණ්ඩායම අනනීය නම්?<br><strong>පි:</strong> audit/විවෘත කේත/කාලය හරහා ආරක්ෂිත බව — මේවා තහවුරු විය යුතුය.</p>`
-      },
-
-      ta:{
-        subtitle:"திட்டத்தின் அடிப்படைங்களின் அடிப்படையில் நீண்டகால மதிப்பு",
-        toc:"உள்ளடக்கம்", introBadge:"அறிமுகம்",
-        title:"கிரிப்டோ முதலீட்டாளர்களுக்கான அடிப்படை (FA) ஆய்வு",
-        deck:"குறுகியகால விலை அலைச்சலுக்கு அப்பால், திட்டம் உண்மையில் மதிப்பைப் பிடிக்குமா என்பதை கண்டறிய பயன்படும் நடைமுறை வழிகாட்டி.",
-        introBody:`<p>அடிப்படை ஆய்வு (FA) என்பது ஒரு திட்டத்தின் <strong>உள்ளார்ந்த நீண்டகால மதிப்பை</strong> அறிதல். அது என்ன கட்டுகிறது, எவ்வாறு நிர்வகிக்கப்படுகிறது, ஏன் டோக்கனில் மதிப்பு சேரும்—இவைகளைப் பார்க்கிறது. கிரிப்டோவில் விலை வேகமாக மாறலாம்; அதனால் இயந்திரத்தைப் புரிந்துகொள்ளுங்கள், அளவுகோலை மட்டும் இல்லை.</p>
-        <p>FA‑வை TA‑வுடன் சேர்த்து பயன்படுத்துங்கள். TA நுழைவு/வெளியேறும் நேரத்தைத் தேர்ந்தெடுக்கும்; FA இந்த சொத்து உங்கள் மூலதனத்துக்குத் தகுதியா என்பதை தீர்மானிக்கும்.</p>`,
-        tipGeneral:`<strong>சுருக்கம்:</strong> <em>பயன்பாடு தெளிவு</em>, <em>ஒழுங்கான வெளியீடு</em>, <em>நம்பகமான அணி</em>, <em>வெளிப்படையான நிர்வாகம்</em>, <em>உண்மையான பயன்பாடு</em>—இவை உள்ள திட்டங்களை முன்னிறுத்துங்கள்.` ,
-
-        tokTitle:"நிலையான மதிப்பு வடிவமைப்பு",
-        tokSupplyTitle:"வழங்கல், வெளியீடு & பகிர்வு",
-        tokSupply:`<ul>
-          <li><strong>வழங்கல் அட்டவணை:</strong> நிலையான உச்சவரம்பா? ஊக்கலாமா? முன்னறிவிக்கத்தக்க மெதுவான வெளியீடு சிறந்தது.</li>
-          <li><strong>ஆரம்ப ஒதுக்கீடு:</strong> நிறுவனர்கள்/முதலீட்டாளர்கள்/கோஷம்/சமூகம்—உட்புறம் அதிகமாக (>50%) இருந்தால் நீண்ட vesting கட்டாயம்.</li>
-          <li><strong>அன்லாக் காலண்டர்:</strong> மாதாந்திர அன்லாக் + திரவத்துடன் ஒப்பிடவும்; பலவீனமான தேவையில் கனரக அன்லாக் விலையை அழுத்தம் செய்கிறது.</li>
-          <li><strong>கோஷக் கொள்கை:</strong> அறிக்கைகள், multisig கட்டுப்பாடு, பட்ஜெட்டிங்—முதிர்ச்சியின் அடையாளம்.</li>
-        </ul>`,
-        tokUtilityTitle:"பயன்பாடு, தேவை & மதிப்பு பிடித்தல்",
-        tokUtility:`<ul>
-          <li><strong>மூல பயன்பாடு:</strong> கட்டணம், பாதுகாப்புக்கான staking, collateral, governance, அணுகல். டோக்கன் இன்றி தயாரிப்பு இயங்குமானால் மதிப்பு பிடித்தல் பலவீனமாகலாம்.</li>
-          <li><strong>மதிப்பு பிடித்தல்:</strong> buy‑and‑burn, fee‑share, பொருளாதார sinks.</li>
-          <li><strong>தேவை இயங்கிகள்:</strong> மீண்டும் பயன்பாடு, developer இணைப்புகள், B2B தேவை.</li>
-          <li><strong>வேகம் கட்டுப்பாடு:</strong> உடனடி விற்பனையை குறைக்கும் ஊக்கங்கள்; அர்த்தமுள்ள staking.</li>
-        </ul>`,
-        tokOnchainTitle:"ஒன்‑செயின் ஆரோக்கியம்",
-        tokOnchain:`<ul>
-          <li><strong>செயலில் உள்ள முகவரிகள் & தக்கவைப்பு:</strong> பயனர்கள் திரும்புகிறார்களா?</li>
-          <li><strong>கட்டணங்கள் & வருவாய்:</strong> டோக்கன் விலை அல்ல; நிஜப் பயன்பாட்டின் சான்று.</li>
-          <li><strong>TVL & ஏகாக்ரம்:</strong> நிலையான TVL > ஊக்கங்களால் வந்த TVL. வ்வேல் பங்கு & ஒப்பந்த ஆபத்துகள்.</li>
-          <li><strong>திரவம் & பட்டியல்கள்:</strong> CEX/DEX ஆழம், ஸ்லிப்பேஜ், சந்தை‑மேக்கர்கள்.</li>
-        </ul>`,
-        tokRisksTitle:"பொதுவான சிக்கல்கள்",
-        tokRisks:`<ul>
-          <li>சிறிய மிதவை உடன் உயர் FDV → அன்லாக் பிறகு காந்தம்.</li>
-          <li>தெளிவற்ற பயன்பாடு; நிதி சேகரிக்க பின்னர் சேர்க்கப்பட்ட டோக்கன்.</li>
-          <li>தெளிவற்ற கோஷம், பாதுகாப்பு பலவீனம், audit இன்றி முக்கிய ஒப்பந்தங்கள்.</li>
-        </ul>`,
-
-        teamTitle:"மனிதர், நிர்வாகம் & கப்பல்",
-        teamBody:`<p><strong>கப்பல் செய்வதே</strong> மதிப்பை உருவாக்குகிறது. நிறுவனர்களின் வரலாறு, திறந்த மூல பங்களிப்புகள், நியமனம், கலாசாரம்—இவைகளைப் பாருங்கள். அளவுகோல்கள், post‑mortems, பயனர் பின்னூட்டம்—வெளிப்படையாகப் பகிரும் அணிகளை விரும்புங்கள்.</p>`,
-        govTitle:"நிர்வாகம் & வெளிப்படைமை",
-        govBody:`<ul>
-          <li><strong>உரிமை/கட்டுப்பாடு:</strong> பெயரிடப்பட்ட multisig, மேம்படுத்தல் நடைமுறை, பாதுகாப்புக் கவுன்சில்.</li>
-          <li><strong>DAO தரம்:</strong> quorum, வாக்களிப்பு, யோசனைகளின் தரம், கோஷ அறிக்கைகள்.</li>
-          <li><strong>சட்ட நிலை:</strong> நிர்வாக ஆபத்து, KYC/AML தாக்கம்.</li>
-        </ul>`,
-        roadmapTitle:"ரோட்மேப் நிஜத்தன்மை",
-        roadmapBody:`<ul>
-          <li>கடந்த 6–12 மாதங்களில் வாக்குறுதி vs வெளியீடு.</li>
-          <li>SDK/இணைப்புகள்/மானியங்கள் போன்ற <em>சேர்க்கை</em> வெளியீடுகள்.</li>
-          <li>ரன்வே: ரொக்கம், ஸ்டேபிள் ரிசர்வ், செலவு வீதம்.</li>
-        </ul>`,
-
-        wpTitle:"கூற்றுகள் → சோதிக்கக்கூடிய முன்னெண்ணங்கள்",
-        wpBody:`<p>வெள்ளைக்காகிதத்தை முதலீட்டாளர்/பொறியாளர் பார்வையில் வாசிக்கவும்; முன்னெண்ணங்களைச் சோதனைக்கு மாற்றவும்:</p>
-        <ul>
-          <li><strong>பிரச்சினை:</strong> யாருக்கு? சந்தை அளவு?</li>
-          <li><strong>வடிவமைப்பு:</strong> ஒப்புமதி, பாதுகாப்பு, நம்பிக்கை முன்எண்ணங்கள்.</li>
-          <li><strong>ஊக்கங்கள்:</strong> யாருக்கு, எப்போது, ஏன் பணம்?</li>
-          <li><strong>மதிப்பு பிடித்தல்:</strong> கட்டண ஓட்டம், வெளியீடு ஓட்டம்; டோக்கனுக்கு எங்கே பிடிக்கிறது?</li>
-          <li><strong>ஆபத்துகள் & காலக்கெடு:</strong> நிஜமானதா? audit உள்ளதா?</li>
-        </ul>
-        <p>நல்ல வெள்ளைக்காகிதம் → <strong>தெளிவான விவரக்குறிப்பு</strong>, பொது களஞ்சியம், அளவிடக்கூடிய KPI‑கள்.</p>`,
-
-        newsTitle:"ஊக்கிகள், கதைகள் & அபாயம்",
-        catTitle:"கவனிக்க வேண்டிய ஊக்கிகள்",
-        catBody:`<ul>
-          <li>மேயின்நெட்/பண்புகள், L2 மாற்றம், fee‑switch வாக்கெடுப்பு.</li>
-          <li>பட்டியல்கள், கூட்டாண்மைகள், முக்கிய chain/wallet இணைப்பு.</li>
-          <li>ஒழுங்குமுறை நடவடிக்கைகள், பாதுகாப்பு சம்பவங்கள், கோஷ நகர்வுகள்.</li>
-        </ul>`,
-        sentTitle:"உணர்வு & கதைக்களம்",
-        sentBody:`<p>கிரிப்டோ <em>கதைகளில்</em> ஓடுகிறது: ஸ்கேலிங், re‑staking, RWA, கேமிங், AI‑x‑கிரிப்டோ, தனியுரிமை. உணர்வு அதிகரிக்கும் போது பயன்படுத்தல் தரவைப் பார்த்து உறுதிப்படுத்துங்கள்.</p>`,
-        tipNews:`<strong>குறிப்பு:</strong> காலெண்டர் வைத்திருங்கள். <em>அடிப்படை + ஊக்கி</em> ஒத்துப்போனால் மட்டும் முன்‑நிலையமைக்கவும்.`,
-
-        wfTitle:"படி‑படியாக ஆராய்ச்சி",
-        wfBody:`<ol>
-          <li><strong>அளவு:</strong> பயன்பாடு & போட்டியாளர்கள்.</li>
-          <li><strong>வாசிக்க:</strong> தளம், ஆவணங்கள், வெள்ளைக்காகிதம்; அளவுகோல்கள் சேகரி.</li>
-          <li><strong>டோக்கனோமிக்ஸ்:</strong> வழங்கல்/அன்லாக்/பிடித்தல்; FDV காட்சி.</li>
-          <li><strong>அணி:</strong> repos, commits, audits, hiring.</li>
-          <li><strong>ஊக்கிகள்:</strong> அடுத்த 3–6 மாத வெளியீடுகள்/வாக்கெடுப்புகள்.</li>
-          <li><strong>மதிப்பீடு:</strong> கீழுள்ள rubric; ஒரு பக்க thesis.</li>
-          <li><strong>அபாயம்:</strong> அளவு, தவறாக்கும் புள்ளி, பல்துறைப்படுத்தல்.</li>
-        </ol>`,
-
-        scoreTitle:"எளிய மதிப்பெண் மாதிரி (0–100)",
-        scoreBody:`<p>ஒவ்வொரு தூணுக்கும் 0–5; வண்ணங்களைப் பயன்படுத்தவும்.</p>
-        <ul>
-          <li>டோக்கனோமிக்ஸ் (×4)</li>
-          <li>அணி & நிர்வாகம் (×3)</li>
-          <li>தயாரிப்பு‑சந்தை பொருத்தம் (×3)</li>
-          <li>கதை & ஊக்கி (×2)</li>
-        </ul>
-        <p><em>உதாரணம்:</em> 4×4 + 3×3 + 3×3 + 2×3 = <strong>72/100</strong>.</p>`,
-        scoreHint:"உதாரண இணை மதிப்பெண்",
-
-        rfTitle:"விரைவு சரிபார்ப்பு",
-        rfBody:`<ul>
-          <li>அடையாளமற்ற கோஷ கட்டுப்பாடு; audit இன்றி முக்கிய ஒப்பந்தங்கள்.</li>
-          <li>FDV மிக உயரம்; மிதவை மிகக் குறைவு; 3 மாதத்தில் கனரக அன்லாக்.</li>
-          <li>பயன்பாடு தெளிவற்றது; வருவாய் மூலமின்றி APY வாக்குறுதி.</li>
-          <li>மார்க்கெட்டிங் மிகுதி; நகலெடுத்த ஆவணங்கள்.</li>
-        </ul>`,
-
-        faqTitle:"அடிக்கடி கேட்கப்படும் கேள்விகள்",
-        faqBody:`<p><strong>கே:</strong> நேரடி மதிப்பு பிடித்தல் இல்லாமல் விலை உயருமா?<br><strong>ப:</strong> சில காலம் மட்டும்; நிலையான உயர்வு பொதுவாக fee/burn/stake போன்ற பிடித்தலை தேவைப்படுத்தும்.</p>
-        <p><strong>கே:</strong> உயர் FDV‑ஐ முழுமையாக தவிர்க்க வேண்டுமா?<br><strong>ப:</strong> அவசியமில்லை; வளர்ச்சி வேகமாகவும் unlock குறைவாகவும் இருந்தால் சாத்தியம்.</p>
-        <p><strong>கே:</strong> அணி பெயரில்லையெனில்?<br><strong>ப:</strong> audit, திறந்த மூல குறியீடு, காலசோதனை—இவற்றால் ஈடு செய்யுங்கள்.</p>`
-      }
+    /* ====== photo-slot logic ====== */
+    const SLOT_KEY_PREFIX = 'photo_slot_';
+    const DEFAULT_URLS = {
+      'top-reward':   'https://iili.io/KngDpJn.th.jpg',
+      'top-convert':  'https://iili.io/KnrIabj.th.jpg',
+      'top-statement':'https://iili.io/KnrTeyu.th.jpg',
+      'nav-home':    'https://iili.io/Knrf9eV.th.jpg',
+      'nav-markets': 'https://iili.io/KnrA1s4.th.jpg',
+      'nav-trade':   'https://iili.io/KnragO7.th.jpg',
+      'nav-futures': 'https://iili.io/Knrla3v.th.jpg',
+      'nav-assets':  'https://iili.io/Knr1Jse.th.jpg'
     };
-
-    // DOM targets
-    const els = {
-      subtitle: document.getElementById('subtitle'),
-      tocTitle: document.getElementById('tocTitle'),
-      introBadge: document.getElementById('introBadge'),
-      title: document.getElementById('title'),
-      deck: document.getElementById('deck'),
-      introBody: document.getElementById('introBody'),
-      tipGeneral: document.getElementById('tipGeneral'),
-
-      tokTitle: document.getElementById('tokTitle'),
-      tokSupplyTitle: document.getElementById('tokSupplyTitle'),
-      tokSupply: document.getElementById('tokSupply'),
-      tokUtilityTitle: document.getElementById('tokUtilityTitle'),
-      tokUtility: document.getElementById('tokUtility'),
-      tokOnchainTitle: document.getElementById('tokOnchainTitle'),
-      tokOnchain: document.getElementById('tokOnchain'),
-      tokRisksTitle: document.getElementById('tokRisksTitle'),
-      tokRisks: document.getElementById('tokRisks'),
-
-      teamTitle: document.getElementById('teamTitle'),
-      teamBody: document.getElementById('teamBody'),
-      govTitle: document.getElementById('govTitle'),
-      govBody: document.getElementById('govBody'),
-      roadmapTitle: document.getElementById('roadmapTitle'),
-      roadmapBody: document.getElementById('roadmapBody'),
-
-      wpTitle: document.getElementById('wpTitle'),
-      wpBody: document.getElementById('wpBody'),
-
-      newsTitle: document.getElementById('newsTitle'),
-      catTitle: document.getElementById('catTitle'),
-      catBody: document.getElementById('catBody'),
-      sentTitle: document.getElementById('sentTitle'),
-      sentBody: document.getElementById('sentBody'),
-      tipNews: document.getElementById('tipNews'),
-
-      wfTitle: document.getElementById('wfTitle'),
-      wfBody: document.getElementById('wfBody'),
-
-      scoreTitle: document.getElementById('scoreTitle'),
-      scoreBody: document.getElementById('scoreBody'),
-      scoreHint: document.getElementById('scoreHint'),
-      meterFill: document.getElementById('meterFill'),
-      scoreNumber: document.getElementById('scoreNumber'),
-
-      rfTitle: document.getElementById('rfTitle'),
-      rfBody: document.getElementById('rfBody'),
-
-      faqTitle: document.getElementById('faqTitle'),
-      faqBody: document.getElementById('faqBody'),
-    };
-
-    function render(lang='en'){
-      const t = copy[lang];
-      els.subtitle.textContent = t.subtitle;
-      els.tocTitle.textContent = t.toc;
-      els.introBadge.textContent = t.introBadge;
-      els.title.textContent = t.title;
-      els.deck.textContent = t.deck;
-      els.introBody.innerHTML = t.introBody;
-      els.tipGeneral.innerHTML = t.tipGeneral;
-
-      els.tokTitle.textContent = t.tokTitle;
-      els.tokSupplyTitle.textContent = t.tokSupplyTitle;
-      els.tokSupply.innerHTML = t.tokSupply;
-      els.tokUtilityTitle.textContent = t.tokUtilityTitle;
-      els.tokUtility.innerHTML = t.tokUtility;
-      els.tokOnchainTitle.textContent = t.tokOnchainTitle;
-      els.tokOnchain.innerHTML = t.tokOnchain;
-      els.tokRisksTitle.textContent = t.tokRisksTitle;
-      els.tokRisks.innerHTML = t.tokRisks;
-
-      els.teamTitle.textContent = t.teamTitle;
-      els.teamBody.innerHTML = t.teamBody;
-      els.govTitle.textContent = t.govTitle;
-      els.govBody.innerHTML = t.govBody;
-      els.roadmapTitle.textContent = t.roadmapTitle;
-      els.roadmapBody.innerHTML = t.roadmapBody;
-
-      els.wpTitle.textContent = t.wpTitle;
-      els.wpBody.innerHTML = t.wpBody;
-
-      els.newsTitle.textContent = t.newsTitle;
-      els.catTitle.textContent = t.catTitle;
-      els.catBody.innerHTML = t.catBody;
-      els.sentTitle.textContent = t.sentTitle;
-      els.sentBody.innerHTML = t.sentBody;
-      els.tipNews.innerHTML = t.tipNews;
-
-      els.wfTitle.textContent = t.wfTitle;
-      els.wfBody.innerHTML = t.wfBody;
-
-      els.scoreTitle.textContent = t.scoreTitle;
-      els.scoreBody.innerHTML = t.scoreBody;
-      els.scoreHint.textContent = t.scoreHint;
-
-      els.rfTitle.textContent = t.rfTitle;
-      els.rfBody.innerHTML = t.rfBody;
-
-      els.faqTitle.textContent = t.faqTitle;
-      els.faqBody.innerHTML = t.faqBody;
-
-      // small flourish to animate meter
-      const example = 72; // example score
-      els.scoreNumber.textContent = example;
-      requestAnimationFrame(()=>{
-        els.meterFill.style.width = '0%';
-        setTimeout(()=>{ els.meterFill.style.width = example+'%'; }, 60);
+    function loadSlot(id){ try { return localStorage.getItem(SLOT_KEY_PREFIX + id) || ''; } catch { return ''; } }
+    function saveSlot(id, dataURL){ try { localStorage.setItem(SLOT_KEY_PREFIX + id, dataURL); } catch {} }
+    function initPhotoSlots(){
+      document.querySelectorAll('.photo-slot').forEach(slot=>{
+        const key = slot.dataset.slot;
+        const img = slot.querySelector('img');
+        const input = slot.querySelector('input[type="file"]');
+        const saved = loadSlot(key);
+        if (saved) {
+          img.src = saved;
+          slot.classList.remove('photo-empty');
+        } else if (DEFAULT_URLS[key]) {
+          img.src = DEFAULT_URLS[key];
+          slot.classList.remove('photo-empty');
+        }
+        input.addEventListener('change', (e)=>{
+          const file = e.target.files && e.target.files[0];
+          if(!file) return;
+          const ok = /jpe?g$/i.test(file.name) || file.type === 'image/jpeg';
+          if(!ok){ alert('Please upload a JPG (.jpg or .jpeg)'); e.target.value=''; return; }
+          const reader = new FileReader();
+          reader.onload = () => {
+            img.src = reader.result;
+            slot.classList.remove('photo-empty');
+            saveSlot(key, reader.result);
+          };
+          reader.readAsDataURL(file);
+        });
       });
     }
 
-    // Bindings
-    const langSel = document.getElementById('lang');
-    langSel.addEventListener('change', e=>{
-      const lang = e.target.value;
-      render(lang);
+    /* ===== Exchange / calculations / WS / panels ===== */
+    const round2 = (x) => Math.round((Number(x)||0) * 100) / 100;
+
+    const marketMeta = Object.create(null);
+    async function loadExchangeMeta() {
+      const url = 'https://fapi.binance.com/fapi/v1/exchangeInfo';
+      try{
+        const res = await fetch(url);
+        const json = await res.json();
+        if (!json || !Array.isArray(json.symbols)) return;
+        for (const s of json.symbols) {
+          const sym = s.symbol;
+          if (allSymbols.indexOf(sym) === -1) continue;
+          let tickSize = '0.01', stepSize = '0.001', minQty = 0;
+          if (Array.isArray(s.filters)) {
+            for (const f of s.filters) {
+              if (f.filterType === 'PRICE_FILTER' && f.tickSize) tickSize = f.tickSize;
+              if ((f.filterType === 'LOT_SIZE' || f.filterType === 'MARKET_LOT_SIZE') && f.stepSize) stepSize = f.stepSize;
+              if ((f.filterType === 'LOT_SIZE' || f.filterType === 'MARKET_LOT_SIZE') && f.minQty) minQty = parseFloat(f.minQty) || 0;
+            }
+          }
+          marketMeta[sym] = { tickSize, stepSize, minQty, priceDp: dpFromTick(tickSize) };
+        }
+      }catch(e){ }
+    }
+    const getMeta = (sym) => marketMeta[sym] || { tickSize: '0.01', stepSize: '0.001', minQty: 0, priceDp: 2 };
+    function formatPrice(sym, x) { const m = getMeta(sym); const q = quantizeToTick(x, m.tickSize); const s = toFixedSafe(q, m.priceDp); const [i, d] = s.split('.'); return joinIntDec(i, d); }
+
+    const primeSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','TONUSDT','ADAUSDT','AVAXUSDT','TRXUSDT','LINKUSDT','DOTUSDT','NEARUSDT','OPUSDT','ARBUSDT','APTUSDT','INJUSDT','RNDRUSDT','SEIUSDT','TIAUSDT','ONDOUSDT'];
+    const seedSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','ADAUSDT','SOLUSDT','XRPUSDT','DOTUSDT','LTCUSDT','LINKUSDT','DOGEUSDT','AAVEUSDT','SUSHIUSDT','SHIBUSDT','COMPUSDT','ETCUSDT','ZECUSDT','XMRUSDT','LRCUSDT','QNTUSDT','CRVUSDT','UNIUSDT','BCHUSDT','XLMUSDT','ATOMUSDT','MATICUSDT','AVAXUSDT','TRXUSDT','EOSUSDT','NEARUSDT','FILUSDT','OPUSDT','ARBUSDT','APTUSDT','SUIUSDT','INJUSDT','RNDRUSDT','GALAUSDT','THETAUSDT','SANDUSDT','MANAUSDT','AXSUSDT','CFXUSDT','ICPUSDT','LDOUSDT','PEPEUSDT','FLOKIUSDT','WIFUSDT','ARKUSDT','IOTAUSDT','KASUSDT','PYTHUSDT','STRKUSDT','JUPUSDT','APEUSDT','BLURUSDT','SEIUSDT','TIAUSDT','TONUSDT','ONDOUSDT'];
+    const allSymbols = Array.from(new Set([...primeSymbols, ...seedSymbols]));
+
+    const maintenanceMarginRates = { BTCUSDT:0.004, ETHUSDT:0.005, BNBUSDT:0.005, ADAUSDT:0.010, SOLUSDT:0.008, XRPUSDT:0.010, DOTUSDT:0.010, LTCUSDT:0.010, LINKUSDT:0.010, DOGEUSDT:0.012, AAVEUSDT:0.010, SUSHIUSDT:0.015, SHIBUSDT:0.020, COMPUSDT:0.010, ETCUSDT:0.010, ZECUSDT:0.015, XMRUSDT:0.020, LRCUSDT:0.020, QNTUSDT:0.015, CRVUSDT:0.020, UNIUSDT:0.010, BCHUSDT:0.010, XLMUSDT:0.015, ATOMUSDT:0.010, MATICUSDT:0.010, AVAXUSDT:0.010, TRXUSDT:0.020, EOSUSDT:0.015, NEARUSDT:0.020, FILUSDT:0.015, OPUSDT:0.015, ARBUSDT:0.020, APTUSDT:0.015, SUIUSDT:0.020, INJUSDT:0.015, RNDRUSDT:0.015, GALAUSDT:0.025, THETAUSDT:0.020, SANDUSDT:0.020, MANAUSDT:0.020, AXSUSDT:0.020, CFXUSDT:0.025, ICPUSDT:0.015, LDOUSDT:0.020, PEPEUSDT:0.030, FLOKIUSDT:0.030, WIFUSDT:0.030, ARKUSDT:0.020, IOTAUSDT:0.020, KASUSDT:0.025, PYTHUSDT:0.020, STRKUSDT:0.020, JUPUSDT:0.020, APEUSDT:0.020, BLURUSDT:0.020, SEIUSDT:0.020, TIAUSDT:0.020, TONUSDT:0.015, ONDOUSDT:0.020 };
+    const getMaintRate = (sym) => maintenanceMarginRates[sym] ?? 0.01;
+
+    const qtyFrom = (marginUsed, leverage, entry) => (leverage * marginUsed) / entry;
+    const upnlLong  = (mark, entry, qty) => (mark - entry) * qty;
+    const upnlShort = (mark, entry, qty) => (entry - mark) * qty;
+    const roiPct = (pnl, usedMargin) => (pnl / usedMargin) * 100;
+    const maintenance = (mmr, mark, qty) => mmr * mark * qty;
+    const marginBalanceCalc = (effectiveMargin, uPnL) => effectiveMargin + uPnL;
+
+    function liqPriceLong(entry, leverage, mmr, marginUsed, effectiveMargin) {
+      const Q = (leverage * marginUsed) / entry;
+      const denom = Q * (1 - mmr);
+      const num = Q * entry - effectiveMargin;
+      if (denom <= 0) return null; const P = num / denom;
+      if (!isFinite(P) || P <= 0) return null; return P;
+    }
+    function liqPriceShort(entry, leverage, mmr, marginUsed, effectiveMargin) {
+      const Q = (leverage * marginUsed) / entry;
+      const denom = Q * (1 + mmr);
+      const num = effectiveMargin + Q * entry;
+      if (denom <= 0) return null; const P = num / denom;
+      if (!isFinite(P) || P <= 0) return null; return P;
+    }
+    const marginRatioPct = (maint, mBal) => { const mb = Number(mBal); if (!isFinite(mb) || mb <= 0) return 100; const r = (maint / mb) * 100; return Math.max(0, Math.min(9999, r)); };
+
+    const feedDiv = document.getElementById('feed');
+    function meterBars(){ const totalBars = 4; const greenBars = Math.floor(Math.random() * totalBars) + 1; let html=''; for(let j=0;j<totalBars;j++) html += `<span class="${j<greenBars?'green':''}"></span>`; return html; }
+
+    /* ===================== PERSISTENCE KEYS ===================== */
+    const LS_TRADES_KEY = 'futures_persist_trades_v2';
+    const LS_WALLET_KEY = 'futures_persist_wallet_v2';
+    const LS_REALIZED_KEY = 'futures_persist_realized_v2';
+    const LS_TARGET_MB_KEY = 'futures_target_main_balance_v2';
+    const TARGET_MAIN_BALANCE = 2066522.55; // $2,066,522.55
+
+    function saveJSON(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+    function loadJSON(k, def=null){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch{return def;} }
+
+    /* ===================== TRADE PANEL ===================== */
+    function createPanel({ sym, leverage, entry, mark, usedMargin, effMargin, mmr, qty, side, marginMode }) {
+      const pnl = side === 'LONG' ? upnlLong(mark, entry, qty) : upnlShort(mark, entry, qty);
+      const roi = roiPct(pnl, usedMargin);
+      const maint = maintenance(mmr, mark, qty);
+      const mBal = marginBalanceCalc(effMargin, pnl);
+      const mRatio = marginRatioPct(maint, mBal);
+      const liq = side === 'LONG' ? liqPriceLong(entry, leverage, mmr, usedMargin, effMargin) : liqPriceShort(entry, leverage, mmr, usedMargin, effMargin);
+      const sideIcon = side === 'LONG' ? '<span class="icon-buy">B</span>' : '<span class="icon-sell">S</span>';
+      const sizeUSDT = mark * qty;
+      const panel = document.createElement('div');
+      panel.className = 'trade-panel';
+      panel.innerHTML = `
+        <div class="header">
+          ${sideIcon}
+          <span class="symbol">${sym}</span>
+          <span class="tag">PERP</span>
+          <span class="tag">${marginMode} ${leverage}×</span>
+          <span class="exclamations">${meterBars()}</span>
+          <i class="fas fa-share-nodes share" title="Share PNL"></i>
+        </div>
+        <div class="content-columns">
+          <div class="column">
+            <div class="stat">
+              <div class="label">PNL (USDT)</div>
+              <div class="value pnl ${pnl < 0 ? 'red' : 'green'}">${formatSignedProfit(sym, pnl)}</div>
+            </div>
+            <div class="stat">
+              <div class="label">Size (USDT)</div>
+              <div class="value size">${formatTwoDP(sizeUSDT)}</div>
+            </div>
+            <div class="stat">
+              <div class="label">Entry Price (USDT)</div>
+              <div class="value entry">${formatPrice(sym, entry)}</div>
+            </div>
+          </div>
+          <div class="column center">
+            <div class="stat">
+              <div class="label no-line">Margin (USDT)</div>
+              <div class="value margin">${formatTwoDP(usedMargin)}</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Mark Price (USDT)</div>
+              <div class="value mark">${formatPrice(sym, mark)}</div>
+            </div>
+          </div>
+          <div class="column right">
+            <div class="stat">
+              <div class="label">ROI</div>
+              <div class="value percent roi ${roi < 0 ? 'red' : 'green'}">${(roi >= 0 ? '+' : '') + toFixedSafe(roi, 2)}%</div>
+            </div>
+            <div class="stat margin-ratio">
+              <div class="label">Margin Ratio</div>
+              <div class="value percent margin-ratio-value ${mRatio >= 80 ? 'red' : 'green'}">${toFixedSafe(mRatio, 2)}%</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Liq. Price (USDT)</div>
+              <div class="value liq">${liq === null ? '—' : formatPrice(sym, liq)}</div>
+            </div>
+          </div>
+        </div>
+        <div class="tp-actions">
+          <button class="tp-btn">Leverage</button>
+          <button class="tp-btn">TP/SL</button>
+          <button class="tp-btn">Close</button>
+          <button class="tp-btn">Reverse</button>
+        </div>`;
+      const panelState = { node: panel, sym, leverage, mmr, entry, usedMargin, effMargin, qty, mark, side, marginMode, lockLoss:false };
+      panel.querySelector('.share').addEventListener('click', ()=> openPNLModal(panelState));
+      return panelState;
+    }
+
+    function renderTrade(t) {
+      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      const roi = roiPct(pnl, t.usedMargin);
+      const maintV = maintenance(t.mmr, t.mark, t.qty);
+      const mBal = marginBalanceCalc(t.effMargin, pnl);
+      const mRatio = marginRatioPct(maintV, mBal);
+      const liq = (t.side === 'LONG') ? liqPriceLong(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin) : liqPriceShort(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin);
+      const pnlEl = t.node.querySelector('.value.pnl'); pnlEl.textContent = formatSignedProfit(t.sym, pnl); pnlEl.classList.toggle('green', pnl >= 0); pnlEl.classList.toggle('red', pnl < 0);
+      t.node.querySelector('.value.mark').textContent = formatPrice(t.sym, t.mark);
+      const sizeEl = t.node.querySelector('.value.size'); sizeEl.textContent = formatTwoDP(t.mark * t.qty);
+      const roiEl = t.node.querySelector('.value.roi'); roiEl.textContent = (roi >= 0 ? '+' : '') + toFixedSafe(roi, 2) + '%'; roiEl.classList.toggle('green', roi >= 0); roiEl.classList.toggle('red', roi < 0);
+      const mrEl = t.node.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
+      const liqEl = t.node.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
+
+      if (currentSharedTrade === t) updatePNLCardFromTrade(t);
+    }
+
+    /* ===== 6M Entry Helpers (for first-time seeding only) ===== */
+    function sixMonthsAgoMs(){ const d=new Date(); d.setMonth(d.getMonth()-6); d.setHours(0,0,0,0); return d.getTime(); }
+    async function fetchSixMonthMarkClose(sym, startMs){
+      try{ const url1=`https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=${sym}&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res1=await fetch(url1); if(res1.ok){ const data=await res1.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      try{ const url2=`https://fapi.binance.com/fapi/v1/continuousKlines?pair=${sym}&contractType=PERPETUAL&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res2=await fetch(url2); if(res2.ok){ const data=await res2.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      try{ const url3=`https://fapi.binance.com/fapi/v1/klines?symbol=${sym}&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res3=await fetch(url3); if(res3.ok){ const data=await res3.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      return null;
+    }
+    async function loadSixMonthEntryMap(symbolList){
+      const start=sixMonthsAgoMs(); const entryMap=Object.create(null); const unique=[...new Set(symbolList)]; const batch=8;
+      for(let i=0;i<unique.length;i+=batch){ const chunk=unique.slice(i,i+batch);
+        await Promise.all(chunk.map(async (sym)=>{ const close=await fetchSixMonthMarkClose(sym,start); if(isFinite(close)) entryMap[sym]=close; })); }
+      return entryMap;
+    }
+
+    /* ===== Live & Seed ===== */
+    const trades=[]; let symbols=shuffle(allSymbols.slice()); const tradeCount=60;
+    function shuffleFeed(){ const nodes=Array.from(feedDiv.children); nodes.filter(n=>n.id!=='emptyState').forEach(n=>feedDiv.appendChild(n)); }
+
+    function saveTrades(){
+      const compact = trades.map(t=>({
+        sym:t.sym, leverage:t.leverage, entry:t.entry, usedMargin:t.usedMargin, effMargin:t.effMargin,
+        mmr:t.mmr, qty:t.qty, side:t.side, marginMode:t.marginMode, lockLoss:!!t.lockLoss
+      }));
+      saveJSON(LS_TRADES_KEY, compact);
+    }
+
+    function rebuildFromSaved(saved, liveMarksMap){
+      const empty=document.getElementById("emptyState"); if(empty) empty.remove();
+      saved.forEach(s=>{
+        const m = getMeta(s.sym);
+        const mark = isFinite(liveMarksMap[s.sym]) ? liveMarksMap[s.sym] :  (m && s.entry ? s.entry : 0);
+        const panelState = createPanel({
+          sym:s.sym, leverage:s.leverage, entry:s.entry, mark,
+          usedMargin:s.usedMargin, effMargin:s.effMargin, mmr:s.mmr, qty:s.qty, side:s.side, marginMode:s.marginMode
+        });
+        panelState.lockLoss = !!s.lockLoss;
+        trades.push(panelState); feedDiv.appendChild(panelState.node);
+      });
+      shuffleFeed(); sizeFeed();
+      recalcAccountTop();
+    }
+
+    async function seedWithFuturesMark6M(){
+      const empty=document.getElementById("emptyState"); if(empty) empty.remove();
+      await loadExchangeMeta();
+      symbols = symbols.filter(s=>!!marketMeta[s]);
+
+      // live marks for later
+      const res=await fetch('https://fapi.binance.com/fapi/v1/premiumIndex'); const arr=await res.json();
+      const markMap=Object.create(null); arr.forEach(o=>{ if(o&&o.symbol) markMap[o.symbol]=parseFloat(o.markPrice); });
+
+      // check saved trades
+      const savedTrades = loadJSON(LS_TRADES_KEY, null);
+      if (Array.isArray(savedTrades) && savedTrades.length){
+        rebuildFromSaved(savedTrades, markMap);
+        return { markMap, seeded:false };
+      }
+
+      // no saved → first-time seed
+      const poolForEntry=Array.from(new Set([...primeSymbols, ...symbols.slice(0, tradeCount*2)]));
+      const entryMap=await loadSixMonthEntryMap(poolForEntry);
+      const MARGIN_MIN=50, MARGIN_MAX=300;
+      const mainList=primeSymbols.filter(s=>marketMeta[s]&&isFinite(markMap[s])&&isFinite(entryMap[s]));
+      const otherList=symbols.filter(s=>!primeSymbols.includes(s)&&marketMeta[s]&&isFinite(markMap[s])&&isFinite(entryMap[s]));
+      const planned=[...mainList, ...otherList].slice(0, tradeCount);
+      const LEV_SET = [10,20,50,100];
+
+      for(let i=0;i<planned.length;i++){
+        const sym=planned[i];
+        const liveMark=markMap[sym]; if(!isFinite(liveMark)) continue;
+        const sixMEntryRaw=entryMap[sym]; if(!isFinite(sixMEntryRaw)) continue;
+
+        const leverage = LEV_SET[Math.floor(Math.random()*LEV_SET.length)];
+        const entry=quantizeToTick(sixMEntryRaw, getMeta(sym).tickSize);
+        const side=(liveMark >= entry) ? 'LONG' : 'SHORT';
+        let usedMargin=(MARGIN_MIN + Math.random()*(MARGIN_MAX - MARGIN_MIN));
+
+        const m=getMeta(sym);
+        let qtyRaw=qtyFrom(usedMargin, leverage, entry);
+        let qty=quantizeDownToStep(qtyRaw, m.stepSize);
+        if(qty < m.minQty) qty = m.minQty;
+
+        const marginMode = Math.random() < 0.5 ? 'Cross' : 'Isolated';
+        let effMargin = (marginMode === 'Isolated') ? usedMargin : usedMargin * (1.5 + Math.random() * 2.5);
+
+        const panelState = createPanel({
+          sym, leverage, entry, mark: liveMark,
+          usedMargin, effMargin, mmr: getMaintRate(sym), qty, side, marginMode
+        });
+
+        trades.push(panelState); feedDiv.appendChild(panelState.node);
+      }
+      shuffleFeed(); sizeFeed();
+      saveTrades();
+      return { markMap, seeded:true };
+    }
+
+    function recalcAccountTop(){
+      let sum=0;
+      for(const t of trades){
+        const pnl=(t.side==='LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+        sum += pnl;
+      }
+      unrealizedSum = sum; refreshTop();
+    }
+
+    function forceTwoSmallLossesRandom(){
+      if (trades.length < 2) return;
+      const chosen=new Set();
+      while(chosen.size<2){ const r=Math.floor(Math.random() * trades.length); chosen.add(r); }
+      chosen.forEach((idx)=>{ const t=trades[idx]; const lossUSD=1 + Math.random()*5; const m=getMeta(t.sym);
+        let newMark=(t.side==='LONG') ? t.entry - (lossUSD / t.qty) : t.entry + (lossUSD / t.qty);
+        newMark=quantizeToTick(newMark, m.tickSize); t.mark=newMark; t.lockLoss=true; renderTrade(t); });
+      recalcAccountTop();
+      saveTrades(); // ensure lockLoss state saved
+    }
+
+    function connectFuturesMarkWS(){
+      const WS_URL='wss://fstream.binance.com/ws/!markPrice@arr';
+      let ws=new WebSocket(WS_URL);
+      ws.onopen=()=>console.log('[WS] Connected');
+      ws.onmessage=(evt)=>{
+        let data; try{ data=JSON.parse(evt.data);}catch{return;}
+        if(!Array.isArray(data)) return;
+        let touched=false;
+        for(const o of data){
+          const sym=o.s; const priceStr=o.p; if(!sym || priceStr===undefined) continue;
+          const mp=parseFloat(priceStr); if(!isFinite(mp)) continue;
+          for(const t of trades){ if(t.sym===sym){ if(t.lockLoss) continue; t.mark=mp; renderTrade(t); touched=true; } }
+        }
+        if(touched) recalcAccountTop();
+      };
+      ws.onclose=()=>{ console.warn('[WS] Closed. Reconnecting in 2s…'); setTimeout(connectFuturesMarkWS, 2000); };
+      ws.onerror=(err)=>{ console.error('[WS] Error', err); try{ ws.close(); }catch{} };
+    }
+
+    function setBottomInset(){
+      const nav = document.getElementById('bottomNav');
+      const h = nav ? Math.max(56, Math.ceil(nav.getBoundingClientRect().height)) : 64;
+      document.documentElement.style.setProperty('--bottom-nav-h', h + 'px');
+    }
+    window.addEventListener('resize', setBottomInset);
+    document.addEventListener('DOMContentLoaded', setBottomInset);
+
+    const pnlEls = {
+      backdrop: document.getElementById('pnlBackdrop'),
+      title: document.getElementById('pnlTitle'),
+      side: document.getElementById('pnlSide'),
+      lev: document.getElementById('pnlLev'),
+      pnl: document.getElementById('pnlValue'),
+      entry: document.getElementById('pnlEntry'),
+      last: document.getElementById('pnlLast'),
+      time: document.getElementById('pnlTime'),
+      user: document.getElementById('pnlUser')
+    };
+    let currentSharedTrade = null;
+    const usernameStatic = 'Codylee';
+
+    function nowStamp(){
+      const d=new Date();
+      const pad=(n)=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    /* Tiny month '1' styling */
+    function formatTimeWithTinyMonthOne(ts){
+      const m = ts.match(/^(\d{4})-(\d{2})-(\d{2}) (.+)$/);
+      if(!m) return ts;
+      const [, Y, MM, DD, rest] = m;
+      const mm = (MM.charAt(0) === '1')
+        ? `<span class="month-one">1</span>${MM.charAt(1)}`
+        : MM;
+      return `${Y}-${mm}-${DD} ${rest}`;
+    }
+
+    function openPNLModal(trade){
+      setBottomInset();
+      currentSharedTrade = trade;
+      pnlEls.user.textContent = usernameStatic;
+      const ts = nowStamp();
+      pnlEls.time.innerHTML = formatTimeWithTinyMonthOne(ts);
+      updatePNLCardFromTrade(trade);
+      pnlEls.backdrop.classList.add('open');
+      pnlEls.backdrop.setAttribute('aria-hidden','false');
+    }
+    function closePNLModal(){
+      pnlEls.backdrop.classList.remove('open');
+      pnlEls.backdrop.setAttribute('aria-hidden','true');
+      currentSharedTrade = null;
+    }
+    pnlEls.backdrop.addEventListener('click', (e)=>{ if(e.target === pnlEls.backdrop) closePNLModal(); });
+
+    document.querySelectorAll('input[name="infoMode"]').forEach(r=>{
+      r.addEventListener('change', ()=>{ if(currentSharedTrade) updatePNLCardFromTrade(currentSharedTrade); });
     });
 
-    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+    function updatePNLCardFromTrade(t){
+      if(!t) return;
+      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      const roi = roiPct(pnl, t.usedMargin);
+      const sideTxt = (t.side === 'LONG') ? 'Long' : 'Short';
+      pnlEls.title.textContent = `${t.sym} Perpetual`;
+      pnlEls.side.textContent = sideTxt;
+      pnlEls.side.style.color = (t.side === 'LONG') ? '#0ecb81' : '#ff6b6b';
+      pnlEls.lev.textContent = `${t.leverage}x`;
+      const mode = (document.querySelector('input[name="infoMode"]:checked')||{}).value || 'PNL';
+      let pnlText;
+      if(mode === 'PNL') {
+        pnlText = formatSignedProfit(t.sym, pnl);
+      } else if(mode === 'ROI') {
+        pnlText = (roi>=0?'+':'') + toFixedSafe(roi,2) + '%';
+      } else {
+        pnlText = `${formatSignedProfit(t.sym, pnl)}  (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`;
+      }
+      pnlEls.pnl.textContent = pnlText;
+      pnlEls.pnl.parentElement.style.color = (pnl >= 0) ? '#0ecb81' : '#e04b4a';
+      pnlEls.entry.textContent = formatPrice(t.sym, t.entry);
+      pnlEls.last.textContent  = formatPrice(t.sym, t.mark);
+    }
 
-    // Initial render
-    render('en');
+    function setupSaveOnlyCard() {
+      const saveBtn = Array.from(document.querySelectorAll('#pnlActions .action')).find(a => a.getAttribute('title') === 'Save');
+      if(!saveBtn) return;
+      saveBtn.addEventListener('click', async () => {
+        const card = document.getElementById('pnlCard');
+        if(!card){ return; }
+        try{
+          const canvas = await html2canvas(card, {useCORS:true, scale:2, backgroundColor:null});
+          const dataURL = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = dataURL;
+          a.download = `PNL_Card_${nowStamp().replace(/[: ]/g,'_')}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }catch(e){
+          alert('Save failed. Please try again.');
+        }
+      });
+    }
+
+    /* ===================== INIT ===================== */
+    (async function init(){
+      setVH();
+      sizeFeed();
+      setBottomInset();
+      initPhotoSlots();
+
+      // Always store target main-balance so we can keep same target over refreshes
+      const storedTarget = loadJSON(LS_TARGET_MB_KEY, null);
+      if (storedTarget === null) saveJSON(LS_TARGET_MB_KEY, TARGET_MAIN_BALANCE);
+
+      // Seed or load saved
+      const { markMap } = await seedWithFuturesMark6M();
+
+      // Wallet/base balance persistence:
+      const savedWallet = loadJSON(LS_WALLET_KEY, null);
+      let initialUnreal = 0;
+      for (const t of trades) {
+        initialUnreal += (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      }
+
+      if (typeof savedWallet === 'number' && isFinite(savedWallet)) {
+        walletBalance = savedWallet; // fixed across refresh
+      } else {
+        walletBalance = round2(TARGET_MAIN_BALANCE - initialUnreal);
+        saveJSON(LS_WALLET_KEY, walletBalance);
+      }
+
+      // Realized PnL persistence
+      const savedRealized = loadJSON(LS_REALIZED_KEY, null);
+      if (savedRealized && typeof savedRealized.usd === 'number' && typeof savedRealized.pct === 'number') {
+        realizedTodayUSD = savedRealized.usd;
+        realizedTodayPct = savedRealized.pct;
+      } else {
+        realizedTodayUSD = randInt(2500, 8500);
+        realizedTodayPct = walletBalance > 0 ? (realizedTodayUSD / walletBalance) * 100 : 0;
+        saveJSON(LS_REALIZED_KEY, { usd: realizedTodayUSD, pct: realizedTodayPct });
+      }
+
+      refreshTop();
+
+      // Force two tiny losses on very first seed (no saved trades yet)
+      const hadSavedTrades = Array.isArray(loadJSON(LS_TRADES_KEY, null));
+      if (!hadSavedTrades) {
+        forceTwoSmallLossesRandom();
+      }
+
+      connectFuturesMarkWS();
+      setupSaveOnlyCard();
+    })();
+
+    document.getElementById("amount").textContent = "Loading…";
+    document.getElementById("walletValue").textContent = "Loading…";
+    document.getElementById("unrealizedValue").textContent = "Loading…";
+    document.getElementById("realizedSpan").textContent = "Loading…";
   </script>
-</body>
-</html>
-<!-- partial -->
-  
+
+  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-card to Binance PLEX) ========= -->
+  <script>
+    (function(){
+      const pnlCard = document.getElementById('pnlCard');
+      if(!pnlCard) return;
+
+      function wrapOnes(root){
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: (node) => {
+              if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
+              const p = node.parentNode;
+              if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
+              if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach(node => {
+          const txt = node.nodeValue;
+          if (!txt || txt.indexOf('1') === -1) return;
+          const frag = document.createDocumentFragment();
+          for (let i=0;i<txt.length;i++){
+            const ch = txt[i];
+            if (ch === '1'){
+              const span = document.createElement('span');
+              span.className = 'one-glyph';
+              span.textContent = '1';
+              frag.appendChild(span);
+            } else {
+              frag.appendChild(document.createTextNode(ch));
+            }
+          }
+          node.parentNode.replaceChild(frag, node);
+        });
+      }
+
+      wrapOnes(pnlCard);
+
+      let timer = null;
+      const mo = new MutationObserver(() => {
+        if (timer) cancelAnimationFrame(timer);
+        timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
+      });
+      mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
+    })();
+  </script>
 </body>
 </html>
